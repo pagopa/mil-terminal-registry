@@ -1,5 +1,5 @@
 group get terminal data by id
-	mil_registry -> registry ++ : findAll(//query document//)
+	mil_registry -> registry ++ : find(//query document//).firstResult()
 		note left
 			__//query document//__
 			{
