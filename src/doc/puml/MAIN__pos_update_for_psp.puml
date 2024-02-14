@@ -13,7 +13,7 @@ management -> mil_registry ++ : PATCH /terminals///<terminal uuid>//
 		Authorization: Bearer //<access token>//
 		__body__
 		{
-			"gtId": "//<new gt id>//",
+			"terminalHandlerId": "//<new terminal handler id>//",
 			"terminalId": "//<new terminal id>//",
 			"enabled": //<new enabled>//,
 			"payeeCode": "//<new payee code>//",
