@@ -1,4 +1,4 @@
-package it.pagopa.swclient.mi;
+package it.pagopa.swclient.mil;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
