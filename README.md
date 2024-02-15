@@ -14,7 +14,8 @@ You can run your application in dev mode that enables live coding using:
 > **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
 gradle --write-locks --write-verification-metadata sha256 dependencies
-
+refers to https://docs.gradle.org/current/userguide/dependency_verification.html#sub:enabling-verification
+and https://docs.gradle.org/8.5/userguide/dependency_locking.html
 
 ## Packaging and running the application
 
