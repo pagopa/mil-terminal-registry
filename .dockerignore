@@ -1,5 +1,10 @@
-*
-!target/*-runner
-!target/*-runner.jar
-!target/lib/*
-!target/quarkus-app/*
+
+.gradle
+build
+.idea
+.github
+.gitignore
+.releaserc.json
+*.iml
+
+src/main/docker/Dockerfile.native-micro
