@@ -88,6 +88,7 @@ jobs:
       # RELEASE CANDIDATE - Build native executable.
       #
       - name: Build and push Docker Release Candidate image
+        if: steps.semantic.outputs.new_release_published == 'true'
         id: docker_build_push_candidate
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
         with:
@@ -167,6 +168,7 @@ jobs:
       # STABLE - Build native executable.
       #
       - name: Build and push Docker STABLE image
+        if: steps.semantic.outputs.new_release_published == 'true'
         id: docker_build_push_stable
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
         with:
