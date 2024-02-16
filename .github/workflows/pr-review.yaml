@@ -12,6 +12,7 @@ on:
 jobs:
   pr-validation:
     runs-on: ubuntu-latest
+    environment: review-ci
 
     steps:
       - name: Find JIRA task IDs from PR title
