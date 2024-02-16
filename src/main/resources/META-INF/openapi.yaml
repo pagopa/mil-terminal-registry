@@ -94,19 +94,19 @@ components:
       example: true
 
     PspId:
-      description: ID of the pagopa psp
+      description: ID of the pagoPa psp
       type: string
       pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
       example: "AGID_01"
 
     BrokerId:
-      description: ID of the pagopa broker
+      description: ID of the pagoPa broker
       type: string
       pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
       example: "97735020584"
 
     ChannelId:
-      description: ID of the pagopa channel
+      description: ID of the pagoPa channel
       type: string
       pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
       example: "97735020584_03"
@@ -175,7 +175,7 @@ components:
           $ref: '#/components/schemas/PayeeCode'
         slave:
           $ref: '#/components/schemas/Enabled'
-        pagoPA:
+        pagoPa:
           $ref: '#/components/schemas/Enabled'
         pagoPaConf:
           $ref: '#/components/schemas/PagoPaConf'
@@ -196,7 +196,7 @@ components:
         enabled: true
         payeeCode: "RSSMRA85T10A562S"
         slave: true
-        pagoPA: false
+        pagoPa: false
         idpay: true
 
     Errors:
