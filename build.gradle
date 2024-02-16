@@ -23,7 +23,7 @@ dependencies {
 }
 
 group 'it.pagopa.swclient.mil'
-version '1.0.0-SNAPSHOT'
+version "${projectVersion}"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_21
