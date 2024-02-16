@@ -4,6 +4,9 @@ on:
   pull_request:
     types:
       - closed
+      - synchronize
+      - edited
+      - opened
     branches:
       - main
 
@@ -12,7 +15,7 @@ env:
 
 jobs:
   post_merge:
-    if: github.event.pull_request.merged == true
+    #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: deployment
 
