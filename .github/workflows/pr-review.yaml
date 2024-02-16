@@ -1,0 +1,64 @@
+name: Pull request review
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+      - synchronize
+
+jobs:
+  pr-validation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Find JIRA task IDs from PR title
+        run: |
+          temp=$(echo "${{ github.event.pull_request.title }}" | grep -o '\[[^]]*\]' | sed 's/\[//;s/\]//' | tr -d ' ')
+          IFS=$',' read -ra keys <<< "$temp"
+          for key in "${keys[@]}"; do
+            echo "Key: $key"
+          done
+
+      - name: PR title validation
+        uses: amannn/action-semantic-pull-request@c3cd5d1ea3580753008872425915e343e351ab54
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            docs
+            refactor
+            chore
+            fix
+            feat
+            breaking
+          requireScope: false
+          subjectPattern: ^[A-Z].+$
+          subjectPatternError: |
+            The subject "{subject}" found in the pull request title "{title}"
+            doesn't match the configured pattern. Please ensure that the subject
+            starts with an uppercase character.
+          wip: false
+
+      - name: Checkout the source code
+        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        with:
+          token: ${{ secrets.GIT_PAT }}
+          fetch-depth: 0
+
+      - name: Setup Java
+        uses: actions/setup-java@387ac29b308b003ca37ba93a6cab5eb57c8f5f93
+        with:
+          distribution: 'corretto'
+          java-version: '21'
+          cache: 'gradle'
+
+      - name: Execute unit-test + Calculate test coverage
+        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification
+
+      - name: Execute Sonar Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew sonar
