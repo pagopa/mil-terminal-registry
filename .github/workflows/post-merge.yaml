@@ -17,7 +17,7 @@ jobs:
   post_merge:
     #if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
-    environment: deployment
+    #environment: deployment
 
     permissions:
       id-token: write
@@ -29,6 +29,20 @@ jobs:
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
         with:
           fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@68827325e0b33c7199eb31dd4e31fbe9023e06e3 #v3.0.0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@f95db51fddba0c2d1ec667646a06c2ce06100226 #v3.0.0
+
+      - name: Log in to the Container registry
+        id: docker_login
+        uses: docker/login-action@343f7c4344506bcbf9b4de18042ae17996df046d #v3.0.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }} # must be a bot token ${{ secrets.BOT_WRITE_PACKAGE_TOKEN }}
 
 #      - name: Login to Azure
 #        if: steps.semantic.outputs.new_release_published == 'true'
@@ -73,8 +87,8 @@ jobs:
       #
       # RELEASE CANDIDATE - Build native executable.
       #
-      - name: Build and push Docker image
-        id: docker_build_push
+      - name: Build and push Docker Release Candidate image
+        id: docker_build_push_candidate
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
         with:
           file: src/main/docker/Dockerfile.native-micro
@@ -152,8 +166,8 @@ jobs:
       #
       # STABLE - Build native executable.
       #
-      - name: Build and push Docker image
-        id: docker_build_push
+      - name: Build and push Docker STABLE image
+        id: docker_build_push_stable
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
         with:
           file: src/main/docker/Dockerfile.native-micro
