@@ -276,16 +276,6 @@ components:
           required: true
           schema:
             $ref: '#/components/schemas/TerminalLocation'
-  #        Retry-After:
-  #          description: Number of seconds after which to check the status of the transaction
-  #          required: true
-  #          schema:
-  #            $ref: '#/components/schemas/RetryAfter'
-  #        Max-Retries:
-  #          description: Max number of retries to check the status of the transaction
-  #          required: true
-  #          schema:
-  #            $ref: '#/components/schemas/MaxRetries'
 
   securitySchemes:
     bearerAuth:
