@@ -141,15 +141,15 @@ jobs:
 #        run: newman run src/test/postman/mil-auth.postman_collection.json -e src/test/postman/dev.postman_environment.json
 
       #
-      # STABLE - Update of pom.xml with the new version.
+      # STABLE - Update of gradle.properties with the new version.
       #
-      - name: STABLE - Update of pom.xml with the new version
+      - name: STABLE - Update of Gradle Properties with the new version
         if: steps.semantic.outputs.new_release_published == 'true'
         run: |
           sed -i -e "s/projectVersion=.*/projectVersion=${{ steps.semantic.outputs.new_release_version }}/g" gradle.properties
           git config user.name "GitHub Workflow"
           git config user.email "<>"
-          git add pom.xml
+          git add gradle.properties
           git commit -m "gradle.properties updated with new version ${{ steps.semantic.outputs.new_release_version }}"
           git push origin main
 
