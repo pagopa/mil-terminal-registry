@@ -1,6 +1,7 @@
 {
   "branches": [
-    "main"
+    "main",
+    "MIL-38-setup-github-actions"
   ],
   "ci": false,
   "tagFormat": "${version}",

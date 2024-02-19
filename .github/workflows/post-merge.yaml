@@ -44,13 +44,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }} # must be a bot token ${{ secrets.BOT_WRITE_PACKAGE_TOKEN }}
 
-#      - name: Login to Azure
-#        if: steps.semantic.outputs.new_release_published == 'true'
-#        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
-#        with:
-#          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-#          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-#          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Login to Azure
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+        with:
+          client-id: ${{ secrets.AZURE_CD_IDENTITY_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_CD_IDENTITY_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       #
       # Calculate of the new version (dry-run).
@@ -138,48 +138,48 @@ jobs:
       #
       # STABLE - Update of pom.xml with the new version.
       #
-      - name: STABLE - Update of pom.xml with the new version
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: |
-          sed -i -e "s/projectVersion=.*/projectVersion=${{ steps.semantic.outputs.new_release_version }}/g" gradle.properties
-          git config user.name "GitHub Workflow"
-          git config user.email "<>"
-          git add pom.xml
-          git commit -m "gradle.properties updated with new version ${{ steps.semantic.outputs.new_release_version }}"
-          git push origin main
-
-      #
-      # Calculation of the new version (again) with tagging + releasing + etc.
-      #
-      - name: Calculation of the new version (w/o dry_run) and put tag
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          semantic_version: 19
-          branch: main
-          extra_plugins: |
-            @semantic-release/release-notes-generator@10.0.3
-            @semantic-release/git@10.0.1
-          dry_run: false
-
-      #
-      # STABLE - Build native executable.
-      #
-      - name: Build and push Docker STABLE image
-        if: steps.semantic.outputs.new_release_published == 'true'
-        id: docker_build_push_stable
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
-        with:
-          file: src/main/docker/Dockerfile.native-micro
-          context: .
-          push: true
-          tags: ${{ steps.semantic.outputs.new_release_version }}
-          labels: |
-            maintainer=https://pagopa.it
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-          platforms: ${{ env.TARGET_PLATFORMS }}
+#      - name: STABLE - Update of pom.xml with the new version
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        run: |
+#          sed -i -e "s/projectVersion=.*/projectVersion=${{ steps.semantic.outputs.new_release_version }}/g" gradle.properties
+#          git config user.name "GitHub Workflow"
+#          git config user.email "<>"
+#          git add pom.xml
+#          git commit -m "gradle.properties updated with new version ${{ steps.semantic.outputs.new_release_version }}"
+#          git push origin main
+#
+#      #
+#      # Calculation of the new version (again) with tagging + releasing + etc.
+#      #
+#      - name: Calculation of the new version (w/o dry_run) and put tag
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          semantic_version: 19
+#          branch: main
+#          extra_plugins: |
+#            @semantic-release/release-notes-generator@10.0.3
+#            @semantic-release/git@10.0.1
+#          dry_run: false
+#
+#      #
+#      # STABLE - Build native executable.
+#      #
+#      - name: Build and push Docker STABLE image
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        id: docker_build_push_stable
+#        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
+#        with:
+#          file: src/main/docker/Dockerfile.native-micro
+#          context: .
+#          push: true
+#          tags: ${{ steps.semantic.outputs.new_release_version }}
+#          labels: |
+#            maintainer=https://pagopa.it
+#            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+#          platforms: ${{ env.TARGET_PLATFORMS }}
 
       #
       # STABLE - Update Container App.
