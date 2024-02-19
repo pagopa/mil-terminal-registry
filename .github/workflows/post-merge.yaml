@@ -25,7 +25,7 @@ jobs:
       - name: Checkout the source code
         uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GIT_GITHUB_TOKEN }}
           fetch-depth: 0
 
       - name: Set up QEMU
