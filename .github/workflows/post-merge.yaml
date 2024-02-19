@@ -86,15 +86,11 @@ jobs:
       #
       # RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar.
       #
-      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage
-        #if: steps.semantic.outputs.new_release_published == 'true'
-        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification
-
-      - name: Execute Sonar Scan
+      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + Sonar
         #if: steps.semantic.outputs.new_release_published == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew sonar
+        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification sonar
 
       #
       # RELEASE CANDIDATE - Build native executable.
@@ -204,3 +200,4 @@ jobs:
 #          inlineScript: |
 #            az config set extension.use_dynamic_install=yes_without_prompt
 #            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+
