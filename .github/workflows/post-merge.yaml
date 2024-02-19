@@ -54,78 +54,78 @@ jobs:
       #
       # Calculate of the new version (dry-run).
       #
-      - name: Calculate of the new version (dry-run)
-        uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d
-        id: semantic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          semantic_version: 19
-          branch: main
-          extra_plugins: |
-            @semantic-release/release-notes-generator@10.0.3
-            @semantic-release/git@10.0.1
-          dry_run: true
-
-      #
-      # RELEASE CANDIDATE - Update of gradle properties with the new version.
-      #
-      - name: RELEASE CANDIDATE - Update of gradle properties with the new version
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: sed -i -e "s/projectVersion=.*/projectVersion=${{ steps.semantic.outputs.new_release_version }}-RC/g" gradle.properties
-
-      #
-      # RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar.
-      #
-      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar
-        if: steps.semantic.outputs.new_release_published == 'true'
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification sonar
-
-      #
-      # RELEASE CANDIDATE - Build native executable.
-      #
-      - name: Build and push Docker Release Candidate image
-        if: steps.semantic.outputs.new_release_published == 'true'
-        id: docker_build_push_candidate
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
-        with:
-          file: src/main/docker/Dockerfile.native-micro
-          context: .
-          push: true
-          tags: ${{ steps.semantic.outputs.new_release_version }}-RC
-          labels: |
-            maintainer=https://pagopa.it
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-          platforms: ${{ env.TARGET_PLATFORMS }}
-
-      #
-      # RELEASE CANDIDATE - Update Container App.
-      #
-#      - name: RELEASE CANDIDATE - Update Container App
-#        if: steps.semantic.outputs.new_release_published == 'true'
-#        uses: azure/CLI@fa0f960f00db49b95fdb54328a767aee31e80105
+#      - name: Calculate of the new version (dry-run)
+#        uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d
+#        id: semantic
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 #        with:
-#          inlineScript: |
-#            az config set extension.use_dynamic_install=yes_without_prompt
-#            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC
-
-      #
-      # Install Node.
-      #
-      - name: Install Node
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
-        with:
-          node-version: "18.16.0"
-
-      #
-      # Install Newman.
-      #
-      - name: Install Newman
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: npm install -g newman
+#          semantic_version: 19
+#          branch: main
+#          extra_plugins: |
+#            @semantic-release/release-notes-generator@10.0.3
+#            @semantic-release/git@10.0.1
+#          dry_run: true
+#
+#      #
+#      # RELEASE CANDIDATE - Update of gradle properties with the new version.
+#      #
+#      - name: RELEASE CANDIDATE - Update of gradle properties with the new version
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        run: sed -i -e "s/projectVersion=.*/projectVersion=${{ steps.semantic.outputs.new_release_version }}-RC/g" gradle.properties
+#
+#      #
+#      # RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar.
+#      #
+#      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        env:
+#          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+#        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification sonar
+#
+#      #
+#      # RELEASE CANDIDATE - Build native executable.
+#      #
+#      - name: Build and push Docker Release Candidate image
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        id: docker_build_push_candidate
+#        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
+#        with:
+#          file: src/main/docker/Dockerfile.native-micro
+#          context: .
+#          push: true
+#          tags: ${{ steps.semantic.outputs.new_release_version }}-RC
+#          labels: |
+#            maintainer=https://pagopa.it
+#            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+#          platforms: ${{ env.TARGET_PLATFORMS }}
+#
+#      #
+#      # RELEASE CANDIDATE - Update Container App.
+#      #
+##      - name: RELEASE CANDIDATE - Update Container App
+##        if: steps.semantic.outputs.new_release_published == 'true'
+##        uses: azure/CLI@fa0f960f00db49b95fdb54328a767aee31e80105
+##        with:
+##          inlineScript: |
+##            az config set extension.use_dynamic_install=yes_without_prompt
+##            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC
+#
+#      #
+#      # Install Node.
+#      #
+#      - name: Install Node
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+#        with:
+#          node-version: "18.16.0"
+#
+#      #
+#      # Install Newman.
+#      #
+#      - name: Install Newman
+#        if: steps.semantic.outputs.new_release_published == 'true'
+#        run: npm install -g newman
 
       #
       # Run Postman collection.
