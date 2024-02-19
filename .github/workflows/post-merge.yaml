@@ -15,7 +15,7 @@ env:
 
 jobs:
   post_merge:
-    #if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: dev-cd
 
@@ -62,7 +62,7 @@ jobs:
         with:
           semantic_version: 19
           branches: |
-            [ 'main', 'MIL-38-setup-github-actions', 'refs/pull/4/merge' ]
+            [ 'main' ]
           extra_plugins: |
             @semantic-release/release-notes-generator@10.0.3
             @semantic-release/git@10.0.1
