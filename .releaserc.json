@@ -2,7 +2,7 @@
   "branches": [
     "main"
   ],
-  "ci": true,
+  "ci": false,
   "tagFormat": "${version}",
   "plugins": [
     [

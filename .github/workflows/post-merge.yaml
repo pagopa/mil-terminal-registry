@@ -67,7 +67,7 @@ jobs:
             @semantic-release/release-notes-generator@10.0.3
             @semantic-release/git@10.0.1
           dry_run: true
-          ci: true
+          ci: false
 
       #
       # RELEASE CANDIDATE - Update of gradle properties with the new version.
