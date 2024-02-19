@@ -104,7 +104,7 @@ jobs:
           context: .
           push: true
           #tags: ${{ steps.semantic.outputs.new_release_version }}-RC
-          tags: test-RC
+          tags: ghcr.io/${{ github.repository }}:test-RC
           labels: |
             maintainer=https://pagopa.it
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
@@ -119,7 +119,7 @@ jobs:
         with:
           inlineScript: |
             az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC
+            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ghcr.io/${{ github.repository }}:test-RC
 
 #      #
 #      # Install Node.
