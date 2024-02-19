@@ -1,0 +1,284 @@
+openapi: 3.1.0
+
+info:
+  title: Terminal Registry Microservice
+  version: 1.0.0
+  description: Terminal Registry Microservice for Multi-channel Integration Layer of SW Client Project
+  contact:
+    name: Antonio Tarricone
+    email: antonio.tarricone@pagopa.it
+
+servers:
+  - description: DEV
+    url: https://mil-d-apim.azure-api.net/mil-terminal-registry
+  - description: UAT
+    url: https://mil-u-apim.azure-api.net/mil-terminal-registry
+
+security:
+  - bearerAuth: [ ]
+
+paths:
+  /terminals:
+    post:
+      operationId: createTerminal
+      summary: Create a new terminal
+      requestBody:
+        $ref: '#/components/requestBodies/TerminalBody'
+      parameters:
+        - in: header
+          name: RequestId
+          schema:
+            $ref: '#/components/parameters/RequestId'
+      responses:
+        "201":
+          $ref: '#/components/responses/Terminal'
+        "400":
+          description: Bad request
+        "401":
+          description: Access token is missing or invalid
+        "403":
+          description: Forbidden
+        "409":
+          description: Terminal already exists
+        "429":
+          description: Too many requests
+        "500":
+          $ref: '#/components/responses/Error'
+        default:
+          description: Unexpected error
+
+components:
+  # ========================================================
+  # Schemas
+  # ========================================================
+  schemas:
+    # ------------------------------------------------------
+    # Basic types
+    # ------------------------------------------------------
+    TerminalHandlerId:
+      description: Terminal Handler identifier
+      type: string
+      pattern: "^\\d{5}$"
+      example: "45856"
+
+    TerminalId:
+      description: ID of the terminal originating the transaction. It must be unique per terminal handler.
+      type: string
+      pattern: "^\\d{8}$"
+      example: "34523860"
+
+    Enabled:
+      description: Flag true if the terminal is enabled
+      type: boolean
+      example: true
+
+    PayeeCode:
+      description: Fiscal Code of the entity that must receive the payment
+      type: string
+      pattern: "^[A-Z0-9]{1,16}$"
+      example: "RSSMRA85T10A562S"
+
+    Slave:
+      description: Flag true if the terminal is in slave mode
+      type: boolean
+      example: true
+
+    PagoPa:
+      description: Flag true if the terminal is enabled to pay pagoPA notices
+      type: boolean
+      example: true
+
+    Idpay:
+      description: Flag true if the terminal is enabled to pay by means idpay
+      type: boolean
+      example: true
+
+    PspId:
+      description: ID of the pagoPa psp
+      type: string
+      pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
+      example: "AGID_01"
+
+    BrokerId:
+      description: ID of the pagoPa broker
+      type: string
+      pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
+      example: "97735020584"
+
+    ChannelId:
+      description: ID of the pagoPa channel
+      type: string
+      pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
+      example: "97735020584_03"
+
+    ErrorCode:
+      description: Error code
+      type: string
+      pattern: "^[A-F0-9]{9}$"
+      example: "001000005"
+
+    ErrorDescription:
+      description: Error description
+      type: string
+      pattern: "^[ -~]{256}$"
+      example: "Unexpected error from server"
+
+    UUID:
+      description: UUID
+      type: string
+      format: uuid
+      pattern: "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$"
+      example: "d0d654e6-97da-4848-b568-99fedccb642b"
+
+    TerminalLocation:
+      description: URL of the terminal
+      type: string
+      format: uri
+      pattern: "^[ -~]{1,2048}$"
+      example: "https://mil-d-apim.azure-api.net/mil-terminal-registry/terminals/c7a1b24b-0583-4772-92eb-dbaa92fd8f16"
+
+    # ------------------------------------------------------
+    # Complex types
+    # ------------------------------------------------------
+    PagoPaConf:
+      description: PagoPa additional information
+      type: object
+      additionalProperties: false
+      properties:
+        pspId:
+          $ref: '#/components/schemas/PspId'
+        brokerId:
+          $ref: '#/components/schemas/BrokerId'
+        channelId:
+          $ref: '#/components/schemas/ChannelId'
+      required:
+        - pspId
+        - brokerId
+        - channelId
+      example:
+        pspId: "AGID_01"
+        brokerId: "97735020584"
+        channelId: "97735020584_03"
+
+    Terminal:
+      description: Data of a terminal
+      type: object
+      additionalProperties: false
+      properties:
+        terminalHandlerId:
+          $ref: '#/components/schemas/TerminalHandlerId'
+        terminalId:
+          $ref: '#/components/schemas/TerminalId'
+        enabled:
+          $ref: '#/components/schemas/Enabled'
+        payeeCode:
+          $ref: '#/components/schemas/PayeeCode'
+        slave:
+          $ref: '#/components/schemas/Enabled'
+        pagoPa:
+          $ref: '#/components/schemas/Enabled'
+        pagoPaConf:
+          $ref: '#/components/schemas/PagoPaConf'
+        idpay:
+          $ref: '#/components/schemas/Enabled'
+      required:
+        - terminalHandlerId
+        - terminalId
+        - enabled
+        - payeeCode
+        - slave
+        - pagoPa
+        - idpay
+        #todo valutare condizionalità tra pagopaconf e pagopa flag
+      example:
+        terminalHandlerId: "12345"
+        terminalId: "12345678"
+        enabled: true
+        payeeCode: "RSSMRA85T10A562S"
+        slave: true
+        pagoPa: false
+        idpay: true
+
+    Errors:
+      description: List of errors
+      type: object
+      additionalProperties: false
+      properties:
+        errors:
+          type: array
+          maxItems: 32
+          items:
+            $ref: '#/components/schemas/Error'
+      required:
+        - errors
+      example:
+        errors:
+          - errorCode: "00000000A"
+            errorDescription: "Generic error"
+          - errorCode: "001000001"
+            errorDescription: "Unexpected error from server"
+
+    Error:
+      description: Error details
+      type: object
+      additionalProperties: false
+      properties:
+        errorCode:
+          $ref: '#/components/schemas/ErrorCode'
+        errorDescription:
+          $ref: '#/components/schemas/ErrorDescription'
+      required:
+        - errorCode
+        - errorDescription
+      example:
+        errorCode: "001000001"
+        errorDescription: "Generic error"
+
+  # ========================================================
+  # Request bodies
+  # ========================================================
+  requestBodies:
+    TerminalBody:
+      description: Request body containing the terminal information
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Terminal'
+
+  # ========================================================
+  # Parameters
+  # ========================================================
+  parameters:
+    RequestId:
+      name: RequestId
+      in: header
+      description: Request Id that will be logged by services
+      required: true
+      schema:
+        $ref: '#/components/schemas/UUID'
+
+  # ========================================================
+  # Responses
+  # ========================================================
+  responses:
+    Error:
+      description: Error response
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Errors'
+
+    Terminal:
+      description: Terminal details
+      headers:
+        Location:
+          description: URL to get the status of the terminal
+          required: true
+          schema:
+            $ref: '#/components/schemas/TerminalLocation'
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
