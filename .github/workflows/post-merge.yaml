@@ -45,7 +45,6 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }} # must be a bot token ${{ secrets.BOT_WRITE_PACKAGE_TOKEN }}
 
       - name: Login to Azure
-        if: steps.semantic.outputs.new_release_published == 'true'
         uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
         with:
           client-id: ${{ secrets.AZURE_CD_IDENTITY_CLIENT_ID }}
