@@ -86,11 +86,15 @@ jobs:
       #
       # RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar.
       #
-      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar
+      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage
+        #if: steps.semantic.outputs.new_release_published == 'true'
+        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification
+
+      - name: Execute Sonar Scan
         #if: steps.semantic.outputs.new_release_published == 'true'
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification sonar
+        run: ./gradlew sonar
 
       #
       # RELEASE CANDIDATE - Build native executable.
