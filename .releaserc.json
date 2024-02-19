@@ -1,9 +1,8 @@
 {
   "branches": [
-    "main",
-    "refs/pull/4/merge"
+    "main"
   ],
-  "ci": false,
+  "ci": true,
   "tagFormat": "${version}",
   "plugins": [
     [
