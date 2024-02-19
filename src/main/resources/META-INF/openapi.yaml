@@ -189,7 +189,6 @@ components:
         - slave
         - pagoPa
         - idpay
-        #todo valutare condizionalità tra pagopaconf e pagopa flag
       example:
         terminalHandlerId: "12345"
         terminalId: "12345678"
