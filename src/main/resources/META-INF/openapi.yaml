@@ -174,13 +174,13 @@ components:
         payeeCode:
           $ref: '#/components/schemas/PayeeCode'
         slave:
-          $ref: '#/components/schemas/Enabled'
+          $ref: '#/components/schemas/Slave'
         pagoPa:
-          $ref: '#/components/schemas/Enabled'
+          $ref: '#/components/schemas/PagoPa'
         pagoPaConf:
           $ref: '#/components/schemas/PagoPaConf'
         idpay:
-          $ref: '#/components/schemas/Enabled'
+          $ref: '#/components/schemas/Idpay'
       required:
         - terminalHandlerId
         - terminalId
