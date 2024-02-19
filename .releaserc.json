@@ -1,7 +1,7 @@
 {
   "branches": [
     "main",
-    "MIL-38-setup-github-actions"
+    "refs/pull/4/merge"
   ],
   "ci": false,
   "tagFormat": "${version}",
