@@ -180,7 +180,9 @@ jobs:
           file: src/main/docker/Dockerfile.native-micro
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+          tags: |
+            ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+            latest
           labels: |
             maintainer=https://pagopa.it
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
