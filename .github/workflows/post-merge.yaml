@@ -62,7 +62,7 @@ jobs:
         with:
           semantic_version: 19
           branches: |
-            [ 'main', 'MIL-38-setup-github-actions' ]
+            [ 'main', 'MIL-38-setup-github-actions', 'refs/pull/4/merge' ]
           extra_plugins: |
             @semantic-release/release-notes-generator@10.0.3
             @semantic-release/git@10.0.1
