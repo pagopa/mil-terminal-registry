@@ -16,6 +16,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-resteasy-reactive'
     implementation 'io.quarkus:quarkus-arc'
     implementation "org.projectlombok:lombok:${lombokVersion}"
+    implementation 'io.quarkus:quarkus-hibernate-validator'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
