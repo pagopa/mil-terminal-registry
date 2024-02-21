@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: dev-cd
     outputs:
-      pushedImage: ghcr.io/${{ github.repository }}:${{ steps.semantic_version.outputs.new_release_version }}
+      pushedImage: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
 
     permissions:
       id-token: write
@@ -158,7 +158,6 @@ jobs:
       #
       - name: Calculation of the new version (w/o dry_run) and put tag
         if: steps.semantic.outputs.new_release_published == 'true'
-        id: semantic_version
         uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
