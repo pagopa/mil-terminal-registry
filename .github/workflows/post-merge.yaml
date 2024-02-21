@@ -11,10 +11,13 @@ env:
   TARGET_PLATFORMS: linux/amd64
 
 jobs:
-  post_merge:
+  deploy_dev:
+    name: Deploy DEV
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     environment: dev-cd
+    outputs:
+      pushedImage: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
 
     permissions:
       id-token: write
@@ -107,16 +110,12 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
           platforms: ${{ env.TARGET_PLATFORMS }}
 
-      #
-      # RELEASE CANDIDATE - Update Container App.
-      #
-      - name: RELEASE CANDIDATE - Update Container App
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: azure/CLI@fa0f960f00db49b95fdb54328a767aee31e80105
+      - name: RELEASE CANDIDATE - Deploy Container App
+        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
         with:
-          inlineScript: |
-            az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC
+          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+          imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC
 
 #      #
 #      # Install Node.
@@ -189,14 +188,31 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
           platforms: ${{ env.TARGET_PLATFORMS }}
 
-      #
-      # STABLE - Update Container App.
-      #
-      - name: STABLE - Update Container App
+      - name: STABLE - Deploy Container App
         if: steps.semantic.outputs.new_release_published == 'true'
-        uses: azure/CLI@fa0f960f00db49b95fdb54328a767aee31e80105
+        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af # v2.0.0
         with:
-          inlineScript: |
-            az config set extension.use_dynamic_install=yes_without_prompt
-            az containerapp update -n ${{ secrets.AZURE_CONTAINER_APP_NAME }} -g ${{ secrets.AZURE_RESOURCE_GROUP_NAME }} --image ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+          imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}
+
+  deploy_uat:
+    name: Deploy UAT
+    needs: [deploy_dev]
+    runs-on: ubuntu-latest
+    environment: uat-cd
+    steps:
+      - name: Login to Azure
+        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+        with:
+          client-id: ${{ secrets.AZURE_CD_IDENTITY_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_CD_IDENTITY_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: STABLE - Deploy Container App
+        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af # v2.0.0
+        with:
+          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+          imageToDeploy: ${{ needs.deploy_dev.outputs.pushedImage }}
 
