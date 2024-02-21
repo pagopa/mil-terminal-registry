@@ -3,18 +3,28 @@ name: Build and push
 on:
   workflow_dispatch:
     inputs:
-      skip-unit-test:
+      skip-build:
         type: boolean
         required: true
-        description: Skip unit-test
+        default: true
+        description: Skip docker build
+      environment:
+        type: choice
+        required: false
+        description: "Environment where to deploy"
+        options:
+          - dev-cd
+          - uat-cd
+
 
 env:
   TARGET_PLATFORMS: linux/arm64
 
 jobs:
-  build_and_push_main:
+  build_and_push:
     runs-on: ubuntu-latest
-
+    outputs:
+      docker-tags: ${{ steps.meta.outputs.tags }}
     permissions:
       id-token: write
       packages: write
@@ -44,16 +54,16 @@ jobs:
         id: meta
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 #v5.5.1
         with:
-          images: ${{ github.repository }}
+          images: ghcr.io/${{ github.repository }}
           tags: |
+            type=semver,pattern={{version}}
             type=ref,event=branch
-            type=ref,event=pr
           labels: |
             maintainer=https://pagopa.it
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       - name: Build and push Docker image
-        id: docker_build_push
+        if: ${{ inputs.skip-build == 'false' }}
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
         with:
           file: src/main/docker/Dockerfile.native-micro
@@ -62,3 +72,28 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ env.TARGET_PLATFORMS }}
+
+
+  deploy:
+    needs: [build_and_push]
+    name: Deploy on ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Login to Azure
+        uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
+        with:
+          client-id: ${{ secrets.AZURE_CD_IDENTITY_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_CD_IDENTITY_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Get image tag to deploy
+        id: tagToDeploy
+        run: echo "::set-output name=tag::$(echo ${{ build_and_push.outputs.docker-tags }} | awk '{print $1}')"
+
+      - name: Deploy Container App
+        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
+        with:
+          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
+          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
+          imageToDeploy: ${{ steps.tagToDeploy.tag }}
