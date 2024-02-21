@@ -25,6 +25,7 @@ note over mil_registry #LightGreen
 		"iss": "https:////<host name>///mil-auth",
 		"iat": //<issue unix epoch>//,
 		"exp": //<expiration unix epoch>//,
+		"channel": "PUBLIC_ADMINISTRATION",
 		"groups": [
 			"public_administration"
 		]
