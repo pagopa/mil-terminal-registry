@@ -202,6 +202,10 @@ jobs:
     needs: [deploy_dev]
     runs-on: ubuntu-latest
     environment: uat-cd
+
+    permissions:
+      id-token: write
+
     steps:
       - name: Login to Azure
         uses: azure/login@92a5484dfaf04ca78a94597f4f19fea633851fa2
