@@ -111,6 +111,7 @@ jobs:
           platforms: ${{ env.TARGET_PLATFORMS }}
 
       - name: RELEASE CANDIDATE - Deploy Container App
+        if: steps.semantic.outputs.new_release_published == 'true'
         uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
         with:
           containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
