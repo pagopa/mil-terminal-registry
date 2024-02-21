@@ -3,11 +3,6 @@ name: Build and deploy from branch
 on:
   workflow_dispatch:
     inputs:
-      skip-build:
-        type: boolean
-        required: true
-        default: true
-        description: Skip docker build
       environment:
         type: choice
         required: false
@@ -65,7 +60,6 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       - name: Build and push Docker image
-        if: ${{ inputs.skip-build == 'false' }}
         uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
         with:
           file: src/main/docker/Dockerfile.native-micro
