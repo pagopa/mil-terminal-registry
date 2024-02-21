@@ -1,6 +1,10 @@
 name: Build and push
 
 on:
+  pull_request:
+    types:
+      - edited
+      - synchronize
   workflow_dispatch:
     inputs:
       skip-build:
