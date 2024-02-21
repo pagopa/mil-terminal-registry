@@ -15,8 +15,6 @@ on:
         options:
           - dev-cd
           - uat-cd
-
-
 env:
   TARGET_PLATFORMS: linux/arm64
 
@@ -25,6 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       docker-tags: ${{ steps.meta.outputs.tags }}
+
     permissions:
       id-token: write
       packages: write
@@ -55,9 +54,12 @@ jobs:
         uses: docker/metadata-action@8e5442c4ef9f78752691e2d8f8d19755c6f78e81 #v5.5.1
         with:
           images: ghcr.io/${{ github.repository }}
+          flavor:
+            latest=false
           tags: |
             type=semver,pattern={{version}}
             type=ref,event=branch
+            type=raw,value=latest,enable={{is_default_branch}}
           labels: |
             maintainer=https://pagopa.it
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
@@ -89,7 +91,7 @@ jobs:
 
       - name: Get image tag to deploy
         id: tagToDeploy
-        run: echo "::set-output name=tag::$(echo ${{ build_and_push.outputs.docker-tags }} | awk '{print $1}')"
+        run: echo "tag=$(echo ${{ needs.build_and_push.outputs.docker-tags }} | awk '{print $1}')" >> $GITHUB_OUTPUT
 
       - name: Deploy Container App
         uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
