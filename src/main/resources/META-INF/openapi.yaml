@@ -96,19 +96,19 @@ components:
     PspId:
       description: ID of the pagoPa psp
       type: string
-      pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
+      pattern: "^[\x{0001}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]{1,35}$"
       example: "AGID_01"
 
     BrokerId:
       description: ID of the pagoPa broker
       type: string
-      pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
+      pattern: "^[\x{0001}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]{1,35}$"
       example: "97735020584"
 
     ChannelId:
       description: ID of the pagoPa channel
       type: string
-      pattern: "^[\u0001-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]{1,35}$"
+      pattern: "^[\x{0001}-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]{1,35}$"
       example: "97735020584_03"
 
     ErrorCode:
