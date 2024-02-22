@@ -18,7 +18,7 @@ note over mil_registry #LightGreen
 	//<base64url of access token signature>//
 	__//<access token payload>//__
 	{
-		"sub": "//<subject id>//",
+		"sub": "//<microservice>//",
 		"aud": "mil.pagopa.it",
 		"iss": "https:////<host name>///mil-auth",
 		"iat": //<issue unix epoch>//,
