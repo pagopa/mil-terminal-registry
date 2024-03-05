@@ -25,6 +25,8 @@ tags:
     description: Related to 'update' operation
   - name: delete
     description: Related to 'delete' operation
+  - name: internal
+    description: For internal purpose only
 
 security:
   - bearerAuth: [ ]
@@ -138,9 +140,10 @@ paths:
 
   /terminals/findByThIds:
     get:
+      x-internal: true
       operationId: findTerminalByThIds
       description: Returns terminal details searching by the couple (Terminal Hander ID, Terminal ID)
-      tags: [ read ]
+      tags: [ read, internal ]
       parameters:
         - $ref: '#/components/parameters/RequestId'
         - $ref: '#/components/parameters/TerminalHandlerId'
@@ -283,9 +286,10 @@ paths:
           description: Unexpected error
     
     get:
+      x-internal: true
       operationId: getTerminal
       description: Returns terminal details
-      tags: [ read ]
+      tags: [ read, internal ]
       responses:
         "200":
           description: Found
