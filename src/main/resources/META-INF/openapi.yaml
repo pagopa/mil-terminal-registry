@@ -34,11 +34,10 @@ paths:
 
     post:
       operationId: createTerminal
-      summary: Creates a new terminal
       description: Creates a new terminal
       tags: [ create ]
       requestBody:
-        $ref: '#/components/requestBodies/CreateTerminal'
+        $ref: '#/components/requestBodies/CreateOrUpdateTerminal'
       responses:
         "201":
           description: Created
@@ -72,7 +71,6 @@ paths:
 
     get:
       operationId: getTerminalList
-      summary: Returns a page of terminals
       description: Returns a page of terminals
       tags: [ read ]
       parameters:
@@ -106,7 +104,6 @@ paths:
   /terminals/findByWorkstation:
     get:
       operationId: findTerminalsByWorkstation
-      summary: Returns the list of terminals linked to a cash desk
       description: Returns the list of terminals linked to a cash desk
       tags: [ read ]
       parameters:
@@ -136,6 +133,116 @@ paths:
           $ref: '#/components/responses/Error'
         default:
           description: Unexpected error
+
+  /terminals/{terminalUuid}/updateWorkstations:
+    patch:
+      operationId: updateWorkstations
+      description: Updates the list of cash desks linked to the terminal
+      tags: [ update ]
+      parameters:
+        - $ref: '#/components/parameters/RequestId'
+        - $ref: '#/components/parameters/TerminalUuid'
+      requestBody:
+        $ref: '#/components/requestBodies/UpdateWorkstations'
+      responses:
+        "204":
+          description: No content
+          $ref: '#/components/responses/NoContent'
+        "400":
+          description: Bad request
+          $ref: '#/components/responses/Error'
+        "401":
+          description: Access token is missing or invalid
+          $ref: '#/components/responses/Error'
+        "403":
+          description: Forbidden
+          $ref: '#/components/responses/Error'
+        "404":
+          description: Not found
+          $ref: '#/components/responses/Error'
+        "415":
+          description: Unsupported media type. Did you provide application/json?
+          $ref: '#/components/responses/Error'
+        "429":
+          description: Too many requests
+          $ref: '#/components/responses/Error'
+        "500":
+          description: Server error
+          $ref: '#/components/responses/Error'
+        default:
+          description: Unexpected error
+
+  /terminals/{terminalUuid}:
+    parameters:
+      - $ref: '#/components/parameters/RequestId'
+      - $ref: '#/components/parameters/TerminalUuid'
+
+    patch:
+      operationId: updateTerminal
+      description: Updated terminal without modify linked cash desks
+      tags: [ update ]
+      requestBody:
+        $ref: '#/components/requestBodies/CreateOrUpdateTerminal'
+      responses:
+        "204":
+          description: No content
+          $ref: '#/components/responses/NoContent'
+        "400":
+          description: Bad request
+          $ref: '#/components/responses/Error'
+        "401":
+          description: Access token is missing or invalid
+          $ref: '#/components/responses/Error'
+        "403":
+          description: Forbidden
+          $ref: '#/components/responses/Error'
+        "404":
+          description: Not found
+          $ref: '#/components/responses/Error'
+        "415":
+          description: Unsupported media type. Did you provide application/json?
+          $ref: '#/components/responses/Error'
+        "429":
+          description: Too many requests
+          $ref: '#/components/responses/Error'
+        "500":
+          description: Server error
+          $ref: '#/components/responses/Error'
+        default:
+          description: Unexpected error
+
+    delete:
+      operationId: deleteTerminal
+      description: Deletes a terminal
+      tags: [ delete ]
+      responses:
+        "204":
+          description: No content
+          $ref: '#/components/responses/NoContent'
+        "400":
+          description: Bad request
+          $ref: '#/components/responses/Error'
+        "401":
+          description: Access token is missing or invalid
+          $ref: '#/components/responses/Error'
+        "403":
+          description: Forbidden
+          $ref: '#/components/responses/Error'
+        "404":
+          description: Not found
+          $ref: '#/components/responses/Error'
+        "415":
+          description: Unsupported media type. Did you provide application/json?
+          $ref: '#/components/responses/Error'
+        "429":
+          description: Too many requests
+          $ref: '#/components/responses/Error'
+        "500":
+          description: Server error
+          $ref: '#/components/responses/Error'
+        default:
+          description: Unexpected error
+    
 
 components:
   # ========================================================
@@ -494,7 +601,7 @@ components:
         slave:
           $ref: '#/components/schemas/Slave'
         workstations:
-          $ref: '#/components/schemas/Workstations'
+          $ref: '#/components/schemas/WorkstationsArray'
         pagoPa:
           $ref: '#/components/schemas/PagoPa'
         pagoPaConf:
@@ -580,6 +687,20 @@ components:
 
     Workstations:
       description: List of cash desk labels
+      type: object
+      additionalProperties: false
+      properties:
+        workstations:
+          $ref: '#/components/schemas/WorkstationsArray'
+      required:
+          - workstations
+      example:
+        workstations:
+          - "cassa-1-ufficio-3"
+          - "cassa-2-ufficio-3"
+
+    WorkstationsArray:
+      description: List of cash desk labels
       type: array
       minItems: 0
       maxItems: 32
@@ -593,12 +714,19 @@ components:
   # Request bodies
   # ========================================================
   requestBodies:
-    CreateTerminal:
-      description: Request to create a new terminal
+    CreateOrUpdateTerminal:
+      description: Request to create a new terminal or update an existing one
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Terminal'
+
+    UpdateWorkstations:
+      description: Update cash desks linked to a terminal
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Workstations'
 
   # ========================================================
   # Parameters
@@ -627,6 +755,14 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/UUID'
+
+    TerminalUuid:
+      name: terminalUuid
+      in: path
+      description: UUID of the terminal which is the target of the operation
+      required: true
+      schema:
+        $ref: '#/components/schemas/TerminalUuid'
 
     Workstation:
       name: workstation
@@ -718,6 +854,20 @@ components:
           schema:
             $ref: '#/components/schemas/Terminals'
 
+    NoContent:
+      description: No content response
+      headers:
+        RateLimit-Limit:
+          description: The number of allowed requests in the current period
+          required: false
+          schema:
+            $ref: '#/components/schemas/RateLimitLimit'
+        RateLimit-Reset:
+          description: The number of seconds left in the current period
+          required: false
+          schema:
+            $ref: '#/components/schemas/RateLimitReset'
+    
   securitySchemes:
     bearerAuth:
       description: A bearer token in the format of a JWS and conforms to the specifications included in RFC8725
