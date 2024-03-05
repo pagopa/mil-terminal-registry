@@ -6,7 +6,7 @@ activate operator
 
 operator -> management ++ : get POS list
 
-management -> mil_registry ++ : GET /terminals?workstation=//<workstation>//
+management -> mil_registry ++ : GET /terminals/findByWorkstation?workstation=//<workstation>//
 	note left
 		__header__
 		RequestId: //<request id>//

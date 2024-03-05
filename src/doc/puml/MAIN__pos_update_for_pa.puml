@@ -6,7 +6,7 @@ activate operator
 
 operator -> management ++ : update POS
 
-management -> mil_registry ++ : PATCH /terminals///<terminal uuid>//
+management -> mil_registry ++ : PATCH /terminals///<terminal uuid>///updateWorkstations
 	note left
 		__header__
 		RequestId: //<request id>//
