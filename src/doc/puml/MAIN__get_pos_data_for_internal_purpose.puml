@@ -4,7 +4,7 @@
 
 activate other
 
-other -> mil_registry ++ : GET /terminals?terminalHandlerId=//<terminal handler id>//&terminalId=//<terminal id>//
+other -> mil_registry ++ : GET /terminals/findByThIds?terminalHandlerId=//<terminal handler id>//&terminalId=//<terminal id>//
 	note left
 		__header__
 		RequestId: //<request id>//
