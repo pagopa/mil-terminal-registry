@@ -4,7 +4,7 @@
 
 activate other
 
-other -> mil_registry ++ : GET /terminals?terminalUuid=//<terminal uuid>//
+other -> mil_registry ++ : GET /terminals///<terminal uuid>//
 	note left
 		__header__
 		RequestId: //<request id>//
