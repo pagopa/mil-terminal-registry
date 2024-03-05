@@ -17,6 +17,8 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation "org.projectlombok:lombok:${lombokVersion}"
     implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-mongodb-panache-common'
+    implementation 'io.quarkus:quarkus-mongodb-panache'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

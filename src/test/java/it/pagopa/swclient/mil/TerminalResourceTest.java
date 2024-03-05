@@ -11,7 +11,7 @@ class TerminalResourceTest {
     @Test
     void testHelloEndpoint() {
         given()
-          .when().get("/hello")
+          .when().get("/terminals")
           .then()
              .statusCode(200)
              .body(is("Hello from Italy"));

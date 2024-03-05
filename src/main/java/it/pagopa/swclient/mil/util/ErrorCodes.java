@@ -25,6 +25,7 @@ public final class ErrorCodes {
     public static final String ERROR_SLAVE_MUST_NOT_BE_NULL                                      = MODULE_ID + "000010";
     public static final String ERROR_PAGOPA_MUST_NOT_BE_NULL                                     = MODULE_ID + "000011";
     public static final String ERROR_IDPAY_MUST_NOT_BE_NULL                                      = MODULE_ID + "000012";
+    public static final String ERROR_TERMINALDTO_MUST_NOT_BE_NULL                                = MODULE_ID + "000013";
 
 
 
@@ -43,6 +44,7 @@ public final class ErrorCodes {
     public static final String ERROR_SLAVE_MUST_NOT_BE_NULL_DESCR = "slave must not be null";
     public static final String ERROR_PAGOPA_MUST_NOT_BE_NULL_DESCR = "pagoPa must not be null";
     public static final String ERROR_IDPAY_MUST_NOT_BE_NULL_DESCR = "idpay must not be null";
+    public static final String ERROR_TERMINALDTO_MUST_NOT_BE_NULL_DESCR = "request body must not be null";
 
 
 
@@ -61,5 +63,6 @@ public final class ErrorCodes {
     public static final String ERROR_SLAVE_MUST_NOT_BE_NULL_MSG = "[" + ERROR_SLAVE_MUST_NOT_BE_NULL + "] " + ERROR_SLAVE_MUST_NOT_BE_NULL_DESCR;
     public static final String ERROR_PAGOPA_MUST_NOT_BE_NULL_MSG = "[" + ERROR_PAGOPA_MUST_NOT_BE_NULL + "] " + ERROR_PAGOPA_MUST_NOT_BE_NULL_DESCR;
     public static final String ERROR_IDPAY_MUST_NOT_BE_NULL_MSG = "[" + ERROR_IDPAY_MUST_NOT_BE_NULL + "] " + ERROR_IDPAY_MUST_NOT_BE_NULL_DESCR;
+    public static final String ERROR_TERMINALDTO_MUST_NOT_BE_NULL_MSG = "[" + ERROR_TERMINALDTO_MUST_NOT_BE_NULL + "] " + ERROR_TERMINALDTO_MUST_NOT_BE_NULL_DESCR;
 
 }
