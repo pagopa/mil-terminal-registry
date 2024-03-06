@@ -23,6 +23,10 @@ dependencies {
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation "io.quarkus:quarkus-jacoco"
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
+
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 group 'it.pagopa.swclient.mil'

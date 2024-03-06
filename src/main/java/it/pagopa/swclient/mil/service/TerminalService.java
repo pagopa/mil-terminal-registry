@@ -13,11 +13,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.ws.rs.InternalServerErrorException;
 import jakarta.ws.rs.core.Response;
 
-import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @ApplicationScoped
 public class TerminalService {
 
@@ -36,20 +31,19 @@ public class TerminalService {
 
         TerminalEntity entity = createTerminalEntity(terminalDto, serviceProviderId, terminalUuid);
 
-/*        return terminalRepository.persist(entity)
+        return terminalRepository.persist(entity)
                 .onFailure().transform(err -> {
-                    Log.errorf(err, "TransactionsService -> createTransaction: Error while storing transaction %s on db", entity.transactionId);
+                    Log.errorf(err, "TerminalService -> createTerminal: Error while persist terminal on db [%s]", entity);
 
                     return new InternalServerErrorException(Response
                             .status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(new Errors(List.of(ErrorCode.ERROR_STORING_DATA_IN_DB), List.of(ErrorCode.ERROR_STORING_DATA_IN_DB_MSG)))
                             .build());
                 })
-                .map(ent -> createTransactionFromIdpayTransactionEntity(ent, null, res.getQrcodeTxtUrl(), true));*/
+                .onItem().transform(terminalSaved -> {
+                    Log.debugf("TerminalService -> createTerminal: terminal saved: [%s]", terminalSaved);
 
-        return Uni.createFrom().item(
-                Response.status(Response.Status.CREATED)
-                        .build());
+                    return Response.status(Response.Status.CREATED).build();
+                });
     }
 
     private TerminalEntity createTerminalEntity(TerminalDto terminalDto, String serviceProviderId, String terminalUuid) {

@@ -31,10 +31,12 @@ More details at [official doc](https://docs.gradle.org/current/userguide/depende
 
 ### How to generate both?
 To generate dependency pinning or the checksum file, gradle provides two flag to use when running a task.
-`--write-locks` to generate lock file and `--write-verification-metadata` to generate checksum file.
-The following command generates both during build task:
+`--write-locks` to generate lock file and `--write-verification-metadata` to generate checksum file. With
+`-DskipTests` you can skip test without getting coverage errors.
+The following commands generates both during build task:
 
-`gradle --write-locks --write-verification-metadata  sha256 build --no-build-cache --refresh-dependencies`
+`gradle --write-locks --write-verification-metadata sha256 -DskipTests quarkusBuild --no-build-cache --refresh-dependencies`
+`gradle --write-locks --write-verification-metadata sha256 -DskipTests quarkusDev --no-build-cache --refresh-dependencies`
 
 NOTE: Sometimes the local gradle cache can inhibit exploration of some dependencies 
 so it is good to perform file generation without using cache with `--no-build-cache --refresh-dependencies`
