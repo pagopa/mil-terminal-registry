@@ -18,15 +18,6 @@ public class Errors {
     private List<String> codes;
     private List<String> descriptions;
 
-    public Errors(List<String> codes) {
-        this.codes = codes;
-    }
-
-    public Errors(List<String> codes, List<String> descriptions) {
-        this.codes = codes;
-        this.descriptions = descriptions;
-    }
-
     public Errors(String error, String description) {
         this.codes = List.of(error);
         this.descriptions = List.of(description);

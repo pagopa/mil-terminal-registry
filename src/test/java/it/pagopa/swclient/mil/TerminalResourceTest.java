@@ -101,4 +101,26 @@ class TerminalResourceTest {
         Assertions.assertEquals(500, response.statusCode());
     }
 
+    @Test
+    void testCreateTerminalError_OtherCode() {
+        WriteError writeError = new WriteError(12345, "Some other error", new BsonDocument());
+        ServerAddress serverAddress = new ServerAddress("localhost", 27017);
+
+        Mockito.when(terminalRepository.persist(Mockito.any(TerminalEntity.class)))
+                .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .header("RequestId", commonHeader.requestId())
+                .header("Authorization", commonHeader.authorization())
+                .and()
+                .body(terminalDto)
+                .when()
+                .post("/terminals")
+                .then()
+                .extract().response();
+
+        Assertions.assertEquals(500, response.statusCode());
+    }
+
 }
