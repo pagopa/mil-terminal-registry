@@ -28,7 +28,7 @@ jobs:
 
     steps:
       - name: Checkout the source code
-        uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
         with:
           fetch-depth: 0
 
@@ -92,7 +92,9 @@ jobs:
 
       - name: Get image tag to deploy
         id: tagToDeploy
-        run: echo "tag=$(echo ${{ needs.build_and_push.outputs.docker-tags }} | awk '{print $1}')" >> $GITHUB_OUTPUT
+        run: |
+          echo ${{ needs.build_and_push.outputs.docker-tags }} | awk '{print $1}'
+          echo "tag=$(echo ${{ needs.build_and_push.outputs.docker-tags }} | awk '{print $1}')" >> $GITHUB_OUTPUT
 
       - name: Deploy Container App
         uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
