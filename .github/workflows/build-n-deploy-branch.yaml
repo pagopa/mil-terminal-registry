@@ -94,7 +94,9 @@ jobs:
         id: tagToDeploy
         run: echo "tag=$(echo ${{ needs.build_and_push.outputs.docker-tags }} | awk '{print $1}')" >> $GITHUB_OUTPUT
 
-      - run: echo ${{ steps.tagToDeploy.tag }}
+      - run: |
+          echo ${{ steps.tagToDeploy.tag }}
+          echo ${{ steps.tagToDeploy.outputs.tag }}
 
       - name: Deploy Container App
         uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
