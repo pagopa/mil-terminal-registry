@@ -16,6 +16,7 @@ env:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
     outputs:
       docker-tags: ${{ steps.meta.outputs.tags }}
       image-digest: ${{ steps.image.outputs.digest }}
