@@ -61,16 +61,16 @@ jobs:
             maintainer=https://pagopa.it
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
-      - name: Build and push Docker image
-        id: image
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
-        with:
-          file: src/main/docker/Dockerfile.native-micro
-          context: .
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          platforms: ${{ env.TARGET_PLATFORMS }}
+#      - name: Build and push Docker image
+#        id: image
+#        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
+#        with:
+#          file: src/main/docker/Dockerfile.native-micro
+#          context: .
+#          push: true
+#          tags: ${{ steps.meta.outputs.tags }}
+#          labels: ${{ steps.meta.outputs.labels }}
+#          platforms: ${{ env.TARGET_PLATFORMS }}
 
 
   deploy:
@@ -99,4 +99,4 @@ jobs:
         with:
           containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
-          imageToDeploy: ${{ steps.tagToDeploy.tag }}@${{ needs.build_and_push.outputs.image-digest }}
+          imageToDeploy: ${{ steps.tagToDeploy.tag }}@sha256:100a2aabd6bd18bb6fe491362375a25445195eb8b33e8a8621f976457f7b15d3
