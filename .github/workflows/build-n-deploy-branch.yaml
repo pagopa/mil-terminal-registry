@@ -99,4 +99,4 @@ jobs:
         with:
           containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
-          imageToDeploy: ${{ steps.tagToDeploy.tag }}@sha256:100a2aabd6bd18bb6fe491362375a25445195eb8b33e8a8621f976457f7b15d3
+          imageToDeploy: ${{ steps.tagToDeploy.tag }}
