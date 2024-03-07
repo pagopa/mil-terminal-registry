@@ -9,7 +9,6 @@ on:
         description: "Environment where to deploy"
         options:
           - dev-cd
-          - uat-cd
 env:
   TARGET_PLATFORMS: linux/amd64
 
