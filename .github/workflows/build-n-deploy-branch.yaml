@@ -99,4 +99,4 @@ jobs:
         with:
           containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
-          imageToDeploy: ${{ steps.tagToDeploy.outputs.tag }}
+          imageToDeploy: ${{ steps.tagToDeploy.outputs.tag }}@${{ needs.build_and_push.outputs.image-digest }}
