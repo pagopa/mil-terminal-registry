@@ -33,7 +33,6 @@ public class TerminalResource {
             @Valid @NotNull(message = ErrorCodes.ERROR_TERMINALDTO_MUST_NOT_BE_NULL_MSG) TerminalDto terminal) throws JsonProcessingException {
 
         CommonHeader headers = new CommonHeader(requestId, authorization);
-
         Log.debugf("TerminalResource -> createTerminal - Input createTerminal: %s, %s", headers, terminal);
 
         return terminalService.createTerminal(headers, terminal);
