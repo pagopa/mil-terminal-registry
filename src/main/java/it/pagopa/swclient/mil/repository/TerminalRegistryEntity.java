@@ -8,7 +8,7 @@ public class TerminalRegistryEntity {
   private String serviceProviderId;
   private String terminalHandlerId;
   private String terminalId;
-  private String enabled;
+  private Boolean enabled;
   private String payeeCode;
   private String slave;
   private String pagoPa;
