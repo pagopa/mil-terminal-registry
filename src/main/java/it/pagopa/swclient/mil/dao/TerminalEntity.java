@@ -7,7 +7,7 @@ import lombok.*;
 @Data
 @Builder
 @Getter
-@MongoEntity(database = "mil", collection = "terminal")
+@MongoEntity(database = "mil", collection = "terminalRegistry")
 public class TerminalEntity {
 
     private String terminalUuid;
