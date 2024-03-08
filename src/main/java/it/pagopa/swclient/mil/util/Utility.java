@@ -3,7 +3,6 @@ package it.pagopa.swclient.mil.util;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.quarkus.logging.Log;
 import it.pagopa.swclient.mil.controller.model.CommonHeader;
 
 import java.security.SecureRandom;
