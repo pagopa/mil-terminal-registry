@@ -4,10 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.pagopa.swclient.mil.controller.model.CommonHeader;
-
-import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 public class Utility {
     private Utility() {
@@ -24,9 +22,7 @@ public class Utility {
     }
 
     public static String generateTerminalUuid() {
-        return new SecureRandom().ints(0, 16)
-                .mapToObj(Integer::toHexString)
-                .limit(24)
-                .collect(Collectors.joining());
+        UUID uuid = UUID.randomUUID();
+        return uuid.toString();
     }
 }

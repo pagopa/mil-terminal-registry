@@ -12,6 +12,7 @@ import it.pagopa.swclient.mil.controller.model.CommonHeader;
 import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
+import it.pagopa.swclient.mil.service.TerminalService;
 import it.pagopa.swclient.mil.util.TerminalTestData;
 import jakarta.ws.rs.WebApplicationException;
 import org.bson.BsonDocument;
@@ -34,15 +35,21 @@ class TerminalResourceTest {
 
     static TerminalEntity terminalEntity;
 
+    static TerminalService terminalService;
+
     @BeforeAll
     static void createTestObjects() {
         commonHeader = TerminalTestData.getCorrectCommonHeader();
         terminalDto = TerminalTestData.getCorrectTerminalDto();
         terminalEntity = TerminalTestData.getCorrectTerminalEntity();
+        terminalService = Mockito.mock(TerminalService.class);
     }
 
     @Test
     void testCreateTerminalEndpoint() {
+        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+                .thenReturn(Uni.createFrom().item(terminalEntity));
+
         Mockito.when(terminalRepository.persist(Mockito.any(TerminalEntity.class))).thenReturn(Uni.createFrom().item(terminalEntity));
 
         Response response = given()
@@ -64,10 +71,12 @@ class TerminalResourceTest {
         WriteError writeError = new WriteError(11000, "Duplicate key violation", new BsonDocument());
         ServerAddress serverAddress = new ServerAddress("localhost", 27017);
 
+        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+                .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));
+
         Mockito.when(terminalRepository.persist(Mockito.any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));
 
-        // Effettua la richiesta API
         Response response = given()
                 .contentType(ContentType.JSON)
                 .header("RequestId", commonHeader.requestId())
@@ -79,12 +88,14 @@ class TerminalResourceTest {
                 .then()
                 .extract().response();
 
-        // Verifica che lo stato di risposta sia 409
         Assertions.assertEquals(409, response.statusCode());
     }
 
     @Test
     void testCreateTerminalError_500() {
+        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+                .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
+
         Mockito.when(terminalRepository.persist(Mockito.any(TerminalEntity.class))).thenReturn(Uni.createFrom().failure(new WebApplicationException()));
 
         Response response = given()
@@ -105,6 +116,9 @@ class TerminalResourceTest {
     void testCreateTerminalError_OtherCode() {
         WriteError writeError = new WriteError(12345, "Some other error", new BsonDocument());
         ServerAddress serverAddress = new ServerAddress("localhost", 27017);
+
+        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+                .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));
 
         Mockito.when(terminalRepository.persist(Mockito.any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));

@@ -1,6 +1,6 @@
 package it.pagopa.swclient.mil.controller.model;
 
-import it.pagopa.swclient.mil.util.TestBase;
+import static it.pagopa.swclient.mil.util.UtilsValidator.validator;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -9,7 +9,8 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class CommonHeaderTest extends TestBase {
+class CommonHeaderTest {
+
   @ParameterizedTest(name = "givenRequestDataThenValidationResult - Test {index}: requestId={0}, authorization={1}, expectedErrors={2}")
   @CsvSource({
           "1a2b3c4d-5e6f-789a-bcde-f0123456789a, Bearer token, 0",
@@ -19,7 +20,7 @@ class CommonHeaderTest extends TestBase {
   })
   void givenRequestDataThenValidationResult(String requestId, String authorization, int expectedErrors) {
     var config = new CommonHeader(Objects.equals(requestId, "null") ? null : requestId, Objects.equals(authorization, "null") ? null : authorization);
-    var validationErrors = validator.validate(config);
+    var validationErrors = validator().validate(config);
 
     assertEquals(expectedErrors, validationErrors.size());
 

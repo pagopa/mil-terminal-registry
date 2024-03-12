@@ -1,19 +1,19 @@
 package it.pagopa.swclient.mil.controller.model;
 
-import it.pagopa.swclient.mil.util.TestBase;
+import static it.pagopa.swclient.mil.util.UtilsValidator.validator;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class TerminalDtoTest extends TestBase {
+class TerminalDtoTest {
 
   @Test
   void givenATerminalThenValidationOk() {
     var terminal = new TerminalDto("45856", "34523860", true,
         "RSSMRA85T10A562S", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertTrue(validationErrors.isEmpty());
   }
@@ -23,7 +23,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto(null, "34523860", true,
             "RSSMRA85T10A562S", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getMessage().contains("terminalHandlerId")));
@@ -34,7 +34,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("458356", "34523860", true,
             "RSSMRA85T10A562S", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getPropertyPath().toString().equals("terminalHandlerId")));
@@ -45,7 +45,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45835", null, true,
             "RSSMRA85T10A562S", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getMessage().contains("terminalId")));
@@ -56,7 +56,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45836", "34523860ABC", true,
             "RSSMRA85T10A562S", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getPropertyPath().toString().equals("terminalId")));
@@ -67,7 +67,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45835", "34523860", null,
             "RSSMRA85T10A562S", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getMessage().contains("enabled")));
@@ -78,7 +78,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45856", "34523860", true,
             "InvalidPayeeCodeInvalidPayeeCodeInvalidPayeeCode", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getPropertyPath().toString().equals("payeeCode")));
@@ -89,7 +89,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45836", "34523860", true,
             "invalidPayee", true, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getPropertyPath().toString().equals("payeeCode")));
@@ -100,7 +100,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45835", "34523860", true,
             "RSSMRA85T10A562S", null, false, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getMessage().contains("slave")));
@@ -111,7 +111,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45835", "34523860", true,
             "RSSMRA85T10A562S", true, null, null, true);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getMessage().contains("pagoPa")));
@@ -122,7 +122,7 @@ class TerminalDtoTest extends TestBase {
     var terminal = new TerminalDto("45856", "34523860", true,
             "RSSMRA85T10A562S", true, false, null, null);
 
-    var validationErrors = validator.validate(terminal);
+    var validationErrors = validator().validate(terminal);
 
     assertEquals(1, validationErrors.size());
     assertTrue(validationErrors.stream().anyMatch(error -> error.getMessage().contains("idpay")));
