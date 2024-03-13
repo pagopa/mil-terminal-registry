@@ -1,44 +1,46 @@
 package it.pagopa.swclient.mil.resource;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.mongodb.MongoWriteException;
 import io.quarkus.logging.Log;
 import io.smallrye.mutiny.Uni;
-import it.pagopa.swclient.mil.controller.model.CommonHeader;
 import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.service.TerminalService;
 import it.pagopa.swclient.mil.util.ErrorCodes;
 import it.pagopa.swclient.mil.util.Errors;
 import it.pagopa.swclient.mil.util.RegexPatterns;
-import it.pagopa.swclient.mil.util.Utility;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.jwt.JsonWebToken;
 
 @Path("/terminals")
 public class TerminalResource {
+
+    private final JsonWebToken jwt;
+
     private final TerminalService terminalService;
 
-    public TerminalResource(TerminalService terminalService) {
+    public TerminalResource(TerminalService terminalService, JsonWebToken jwt) {
         this.terminalService = terminalService;
+        this.jwt = jwt;
     }
 
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"pos_service_provider"})
     public Uni<Response> createTerminal(
             @HeaderParam("RequestId") @NotNull(message = ErrorCodes.ERROR_REQUESTID_MUST_NOT_BE_NULL_MSG) @Pattern(regexp = RegexPatterns.REQUEST_ID_PATTERN) String requestId,
-            @HeaderParam("Authorization") @NotNull(message = ErrorCodes.ERROR_AUTHORIZATION_MUST_NOT_BE_NULL_MSG) String authorization,
-            @Valid @NotNull(message = ErrorCodes.ERROR_TERMINALDTO_MUST_NOT_BE_NULL_MSG) TerminalDto terminal) throws JsonProcessingException {
+            @Valid @NotNull(message = ErrorCodes.ERROR_TERMINALDTO_MUST_NOT_BE_NULL_MSG) TerminalDto terminal) {
 
-        CommonHeader headers = new CommonHeader(requestId, authorization);
-        Log.debugf("TerminalResource -> createTerminal - Input createTerminal: %s", terminal);
+        Log.debugf("TerminalResource -> createTerminal - Input requestId, createTerminal: %s, %s", requestId, terminal);
 
-        String serviceProviderId = Utility.decodeBearerPayload(headers);
+        String serviceProviderId = jwt.getSubject();
 
         return terminalService.createTerminal(serviceProviderId, terminal)
                 .onFailure().transform(err -> {
