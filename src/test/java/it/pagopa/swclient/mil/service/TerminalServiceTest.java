@@ -7,7 +7,6 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
-import it.pagopa.swclient.mil.controller.model.CommonHeader;
 import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
@@ -28,15 +27,12 @@ class TerminalServiceTest {
 
     static TerminalDto terminalDto;
 
-    static CommonHeader commonHeader;
-
     static TerminalEntity terminalEntity;
 
     static TerminalService terminalService;
 
     @BeforeAll
     static void createTestObjects() {
-        commonHeader = TerminalTestData.getCorrectCommonHeader();
         terminalDto = TerminalTestData.getCorrectTerminalDto();
         terminalEntity = TerminalTestData.getCorrectTerminalEntity();
         terminalService = new TerminalService(terminalRepository);

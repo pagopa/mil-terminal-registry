@@ -12,7 +12,6 @@ import io.quarkus.test.security.jwt.JwtSecurity;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import io.smallrye.mutiny.Uni;
-import it.pagopa.swclient.mil.controller.model.CommonHeader;
 import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.resource.TerminalResource;
@@ -36,15 +35,12 @@ class TerminalResourceTest {
     @InjectMock
     static TerminalService terminalService;
 
-    static CommonHeader commonHeader;
-
     static TerminalDto terminalDto;
 
     static TerminalEntity terminalEntity;
 
     @BeforeAll
     static void createTestObjects() {
-        commonHeader = TerminalTestData.getCorrectCommonHeader();
         terminalDto = TerminalTestData.getCorrectTerminalDto();
         terminalEntity = TerminalTestData.getCorrectTerminalEntity();
     }
@@ -60,7 +56,7 @@ class TerminalResourceTest {
 
         Response response = given()
                 .contentType(ContentType.JSON)
-                .header("RequestId", commonHeader.requestId())
+                .header("RequestId", "1a2b3c4d-5e6f-789a-bcde-f0123456789a")
                 .and()
                 .body(terminalDto)
                 .when()
@@ -85,7 +81,7 @@ class TerminalResourceTest {
 
         Response response = given()
                 .contentType(ContentType.JSON)
-                .header("RequestId", commonHeader.requestId())
+                .header("RequestId", "1a2b3c4d-5e6f-789a-bcde-f0123456789a")
                 .and()
                 .body(terminalDto)
                 .when()
@@ -107,7 +103,7 @@ class TerminalResourceTest {
 
         Response response = given()
                 .contentType(ContentType.JSON)
-                .header("RequestId", commonHeader.requestId())
+                .header("RequestId", "1a2b3c4d-5e6f-789a-bcde-f0123456789a")
                 .and()
                 .body(terminalDto)
                 .when()
@@ -132,7 +128,7 @@ class TerminalResourceTest {
 
         Response response = given()
                 .contentType(ContentType.JSON)
-                .header("RequestId", commonHeader.requestId())
+                .header("RequestId", "1a2b3c4d-5e6f-789a-bcde-f0123456789a")
                 .and()
                 .body(terminalDto)
                 .when()
