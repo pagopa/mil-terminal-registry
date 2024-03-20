@@ -137,10 +137,10 @@ jobs:
       #
       # Run Postman collection.
       #
-#      - name: Run Postman collection
-#        if: steps.semantic.outputs.new_release_published == 'true'
-#        run: newman run src/test/postman/mil-auth.postman_collection.json -e src/test/postman/dev.postman_environment.json
-
+      - name: Run Postman collection
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: newman run src/test/java/it/pagopa/swclient/mil/postman/mil-terminal-registry.postman_collection.json -e src/test/java/it/pagopa/swclient/mil/postman/dev.postman_environment.json
+       
       #
       # STABLE - Update of gradle.properties with the new version.
       #

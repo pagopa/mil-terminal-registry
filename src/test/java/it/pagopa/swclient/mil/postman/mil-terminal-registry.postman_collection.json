@@ -1,0 +1,143 @@
+{
+	"info": {
+		"_postman_id": "7ed6e99e-50de-4fe1-a17f-f582d6545160",
+		"name": "Terminal Registry Microservice Copy",
+		"description": "Terminal Registry Microservice for Multi-channel Integration Layer of SW Client Project\n\nContact Support:\n Name: Antonio Tarricone\n Email: antonio.tarricone@pagopa.it",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26204659"
+	},
+	"item": [
+		{
+			"name": "create Terminal",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"description": "(Required) Request Id that will be logged by services",
+						"key": "RequestId",
+						"value": "{{requestId}}"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"terminalHandlerId\": \"{{terminalHandlerId}}\",\n  \"terminalId\": \"{{terminalId}}\",\n  \"enabled\": \"{{enabled}}\",\n  \"payeeCode\": \"{{payeeCode}}\",\n  \"slave\": \"{{slave}}\",\n  \"pagoPa\": \"{{pagoPa}}\",\n  \"idpay\": \"{{idpay}}\",\n  \"pagoPaConf\": {\n    \"pspId\": \"{{pspId}}\",\n    \"brokerId\": \"{{brokerId}}\",\n    \"channelId\": \"{{channelId}}\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{baseUrl}}/terminals",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"terminals"
+					]
+				},
+				"description": "Creates a new terminal"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{bearerToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "https://mil-d-apim.azure-api.net/mil-terminal-registry",
+			"type": "string"
+		},
+		{
+			"key": "terminalHandlerId",
+			"value": "45856",
+			"type": "string"
+		},
+		{
+			"key": "terminalId",
+			"value": "34523860",
+			"type": "string"
+		},
+		{
+			"key": "enabled",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "payeeCode",
+			"value": "06534340721",
+			"type": "string"
+		},
+		{
+			"key": "slave",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "pagoPa",
+			"value": "false",
+			"type": "string"
+		},
+		{
+			"key": "idpay",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "pspId",
+			"value": "AGID_01",
+			"type": "string"
+		},
+		{
+			"key": "brokerId",
+			"value": "97735020584",
+			"type": "string"
+		},
+		{
+			"key": "channelId",
+			"value": "97735020584_03",
+			"type": "string"
+		},
+		{
+			"key": "requestId",
+			"value": "d0d654e6-97da-4848-b568-99fedccb642b"
+		}
+	]
+}
