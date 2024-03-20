@@ -8,6 +8,7 @@ import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
 import it.pagopa.swclient.mil.util.Utility;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.util.List;
 
 @ApplicationScoped
 public class TerminalService {
@@ -29,6 +30,27 @@ public class TerminalService {
         return terminalRepository.persist(entity)
                 .onFailure().transform(error -> error)
                 .onItem().transform(terminalSaved -> terminalSaved);
+    }
+
+    /**
+     * Returns a list of terminals paginated. The query filters on serviceProviderId.
+     *
+     * @param pageIndex 0-based page index
+     * @param pageSize  page size
+     * @return a list of terminals
+     */
+    public Uni<List<TerminalEntity>> getTerminalListPaged(String serviceProviderId, int pageIndex,
+          int pageSize) {
+
+        return terminalRepository
+              .find("serviceProviderId", serviceProviderId)
+              .page(pageIndex, pageSize)
+              .list();
+    }
+
+    public Uni<Long> getTerminalCount(String serviceProviderId) {
+        return terminalRepository
+              .count("serviceProviderId", serviceProviderId);
     }
 
     private TerminalEntity createTerminalEntity(TerminalDto terminalDto, String serviceProviderId, String terminalUuid) {
