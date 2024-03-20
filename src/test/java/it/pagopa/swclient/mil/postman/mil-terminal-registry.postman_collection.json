@@ -8,14 +8,105 @@
 	},
 	"item": [
 		{
-			"name": "create Terminal",
+			"name": "getTerminalRegistryAccessToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"access_token\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"token_type\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"expires_in\");\r",
+							"\r",
+							"    pm.test(\"Token type\", function () {\r",
+							"        var jsonData = pm.response.json();\r",
+							"        pm.expect(jsonData.token_type).to.eql(\"Bearer\");\r",
+							"         pm.environment.set(\"access_token_nodo\", jsonData.access_token);\r",
+							"\r",
+							"    });\r",
+							"\r",
+							"   \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "RequestId",
+						"value": "{{$guid}}",
+						"type": "text"
+					},
+					{
+						"key": "Version",
+						"value": "{{mil_idp_api_version}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{idp_token_nodo_client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{idp_token_nodo_client_secret}}",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{MIL_IDP_BASE_URL}}/token",
+					"host": [
+						"{{MIL_IDP_BASE_URL}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createTerminal",
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"description": "(Required) Request Id that will be logged by services",
 						"key": "RequestId",
-						"value": "{{requestId}}"
+						"value": "{{$guid}}"
 					},
 					{
 						"key": "Content-Type",
@@ -136,8 +227,8 @@
 			"type": "string"
 		},
 		{
-			"key": "requestId",
-			"value": "d0d654e6-97da-4848-b568-99fedccb642b"
+			"key": "mil_tr_api_version",
+			"value": "1.0.0"
 		}
 	]
 }
