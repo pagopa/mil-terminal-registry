@@ -84,6 +84,19 @@ class TerminalServiceTest {
             .assertItem(mockedList());
     }
 
+    @Test
+    void whenGetTerminalCountThenSuccess() {
+        Mockito.when(terminalRepository.count("serviceProviderId", "serviceProviderId"))
+            .thenReturn(Uni.createFrom().item(10L));
+
+        var terminalCount = terminalService.getTerminalCount("serviceProviderId");
+
+        terminalCount
+            .subscribe()
+            .withSubscriber(UniAssertSubscriber.create())
+            .assertItem(10L);
+    }
+
     private List<TerminalEntity> mockedList() {
         return List.of(
             TerminalEntity.builder()
