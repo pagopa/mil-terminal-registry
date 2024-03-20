@@ -1,26 +1,28 @@
 package it.pagopa.swclient.mil.controller.model;
 
 
+import it.pagopa.swclient.mil.util.ErrorCodes;
+import it.pagopa.swclient.mil.util.RegexPatterns;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
-public record TerminalDto(@NotNull
-                          @Pattern(regexp = "^\\d{5}$")
+public record TerminalDto(@NotNull(message = ErrorCodes.ERROR_TERMINALHANDLERID_MUST_NOT_BE_NULL_MSG)
+                          @Pattern(regexp = RegexPatterns.MAX_FIVE_NUM_PATTERN)
                           String terminalHandlerId,
-                          @NotNull
-                          @Pattern(regexp = "^\\d{8}$")
+                          @NotNull(message = ErrorCodes.ERROR_TERMINALID_MUST_NOT_BE_NULL_MSG)
+                          @Pattern(regexp = RegexPatterns.MAX_EIGHT_NUM_PATTERN)
                           String terminalId,
-                          @NotNull
+                          @NotNull(message = ErrorCodes.ERROR_ENABLED_MUST_NOT_BE_NULL_MSG)
                           Boolean enabled,
-                          @NotNull
-                          @Pattern(regexp = "^[A-Z0-9]{1,16}$")
+                          @NotNull(message = ErrorCodes.ERROR_PAYEECODE_MUST_NOT_BE_NULL_MSG)
+                          @Pattern(regexp = RegexPatterns.ALPHANUMERIC_UPPERCASE_LIMITED_PATTERN)
                           String payeeCode,
-                          @NotNull
+                          @NotNull(message = ErrorCodes.ERROR_SLAVE_MUST_NOT_BE_NULL_MSG)
                           Boolean slave,
-                          @NotNull
+                          @NotNull(message = ErrorCodes.ERROR_PAGOPA_MUST_NOT_BE_NULL_MSG)
                           Boolean pagoPa,
                           PagoPaConf pagoPaConf,
-                          @NotNull
+                          @NotNull(message = ErrorCodes.ERROR_IDPAY_MUST_NOT_BE_NULL_MSG)
                           Boolean idpay) {
 
 }

@@ -3,6 +3,6 @@ package it.pagopa.swclient.mil;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class GreetingResourceIT extends GreetingResourceTest {
+class TerminalResourceIT extends TerminalResourceTest {
     // Execute the same tests but in packaged mode.
 }

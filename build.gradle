@@ -17,10 +17,20 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
     implementation "org.projectlombok:lombok:${lombokVersion}"
     implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-mongodb-panache-common'
+    implementation 'io.quarkus:quarkus-mongodb-panache'
+    implementation 'org.eclipse.microprofile.jwt:microprofile-jwt-auth-api'
+    implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-test-security'
+    implementation 'io.quarkus:quarkus-test-security-jwt'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation "io.quarkus:quarkus-jacoco"
+    testImplementation 'org.mockito:mockito-core'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
+
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
 }
 
 group 'it.pagopa.swclient.mil'
