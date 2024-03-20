@@ -1,8 +1,12 @@
 package it.pagopa.swclient.mil.service;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+
 import com.mongodb.MongoWriteException;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteError;
+import io.quarkus.mongodb.panache.reactive.ReactivePanacheQuery;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 import io.smallrye.mutiny.Uni;
@@ -11,6 +15,7 @@ import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
 import it.pagopa.swclient.mil.util.TerminalTestData;
+import java.util.List;
 import org.bson.BsonDocument;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +46,7 @@ class TerminalServiceTest {
     @Test
     void testCreateTerminal_Success() {
 
-        Mockito.when(terminalRepository.persist(Mockito.any(TerminalEntity.class)))
+        Mockito.when(terminalRepository.persist(any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().item(terminalEntity));
 
         Uni<TerminalEntity> result = terminalService.createTerminal("1234567890", terminalDto);
@@ -54,7 +59,7 @@ class TerminalServiceTest {
         WriteError writeError = new WriteError(11000, "Duplicate key violation", new BsonDocument());
         ServerAddress serverAddress = new ServerAddress("localhost", 27017);
 
-        Mockito.when(terminalRepository.persist(Mockito.any(TerminalEntity.class)))
+        Mockito.when(terminalRepository.persist(any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));
 
         Uni<TerminalEntity> result = terminalService.createTerminal("1234567890", terminalDto);
@@ -62,5 +67,29 @@ class TerminalServiceTest {
         result.subscribe()
                 .withSubscriber(UniAssertSubscriber.create())
                 .assertFailedWith(MongoWriteException.class);
+    }
+
+    @Test
+    void whenGetTerminalListThenSuccess() {
+        ReactivePanacheQuery<TerminalEntity> query = Mockito.mock(ReactivePanacheQuery.class);
+        Mockito.when(query.page(anyInt(), anyInt())).thenReturn(query);
+        Mockito.when(query.list()).thenReturn(Uni.createFrom().item(mockedList()));
+        Mockito.when(terminalRepository.find("serviceProviderId", "serviceProviderId")).thenReturn(query);
+
+        var terminalList = terminalService.getTerminalListPaged("serviceProviderId", 0, 10);
+
+        terminalList
+            .subscribe()
+            .withSubscriber(UniAssertSubscriber.create())
+            .assertItem(mockedList());
+    }
+
+    private List<TerminalEntity> mockedList() {
+        return List.of(
+            TerminalEntity.builder()
+                .terminalUuid("uuid1").build(),
+            TerminalEntity.builder()
+                .terminalUuid("uuid2").build()
+        );
     }
 }
