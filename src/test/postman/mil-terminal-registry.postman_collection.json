@@ -62,7 +62,7 @@
 					},
 					{
 						"key": "Version",
-						"value": "{{mil_idp_api_version}}",
+						"value": "{{mil_tr_api_version}}",
 						"type": "text"
 					}
 				],
@@ -76,20 +76,20 @@
 						},
 						{
 							"key": "client_id",
-							"value": "{{idp_token_nodo_client_id}}",
+							"value": "{{tr_token_client_id}}",
 							"type": "text"
 						},
 						{
 							"key": "client_secret",
-							"value": "{{idp_token_nodo_client_secret}}",
+							"value": "{{tr_token_client_secret}}",
 							"type": "default"
 						}
 					]
 				},
 				"url": {
-					"raw": "{{MIL_IDP_BASE_URL}}/token",
+					"raw": "{{MIL_TR_BASE_URL}}/token",
 					"host": [
-						"{{MIL_IDP_BASE_URL}}"
+						"{{MIL_TR_BASE_URL}}"
 					],
 					"path": [
 						"token"
