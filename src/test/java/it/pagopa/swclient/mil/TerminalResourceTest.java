@@ -25,7 +25,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
 
+import java.util.ArrayList;
+
 import static io.restassured.RestAssured.given;
+import static org.mockito.ArgumentMatchers.any;
 
 @QuarkusTest
 @TestHTTPEndpoint(TerminalResource.class)
@@ -50,8 +53,8 @@ class TerminalResourceTest {
     @JwtSecurity(claims = {
             @Claim(key = "sub", value = "1234567890")
     })
-    void testCreateTerminalEndpoint() {
-        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+    void testCreateTerminalEndpoint_201() {
+        Mockito.when(terminalService.createTerminal(any(String.class), any(TerminalDto.class)))
                 .thenReturn(Uni.createFrom().item(terminalEntity));
 
         Response response = given()
@@ -76,7 +79,7 @@ class TerminalResourceTest {
         WriteError writeError = new WriteError(11000, "Duplicate key violation", new BsonDocument());
         ServerAddress serverAddress = new ServerAddress("localhost", 27017);
 
-        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+        Mockito.when(terminalService.createTerminal(any(String.class), any(TerminalDto.class)))
                 .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));
 
         Response response = given()
@@ -98,7 +101,7 @@ class TerminalResourceTest {
             @Claim(key = "sub", value = "1234567890")
     })
     void testCreateTerminalError_500() {
-        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+        Mockito.when(terminalService.createTerminal(any(String.class), any(TerminalDto.class)))
                 .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
 
         Response response = given()
@@ -123,7 +126,7 @@ class TerminalResourceTest {
         WriteError writeError = new WriteError(12345, "Some other error", new BsonDocument());
         ServerAddress serverAddress = new ServerAddress("localhost", 27017);
 
-        Mockito.when(terminalService.createTerminal(Mockito.any(String.class), Mockito.any(TerminalDto.class)))
+        Mockito.when(terminalService.createTerminal(any(String.class), any(TerminalDto.class)))
                 .thenReturn(Uni.createFrom().failure(new MongoWriteException(writeError, serverAddress)));
 
         Response response = given()
@@ -133,6 +136,78 @@ class TerminalResourceTest {
                 .body(terminalDto)
                 .when()
                 .post("/")
+                .then()
+                .extract().response();
+
+        Assertions.assertEquals(500, response.statusCode());
+    }
+
+    @Test
+    @TestSecurity(user = "testUser", roles = {"pos_service_provider"})
+    @JwtSecurity(claims = {
+            @Claim(key = "sub", value = "1234567890")
+    })
+    void testGetTerminalsEndpoint_200() {
+        Mockito.when(terminalService.getTerminalCount("1234567890"))
+                .thenReturn(Uni.createFrom().item(10L));
+
+        Mockito.when(terminalService.getTerminalListPaged("1234567890", 0, 10))
+                .thenReturn(Uni.createFrom().item(new ArrayList<>()));
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .header("RequestId", "1a2b3c4d-5e6f-789a-bcde-f0123456789a")
+                .queryParam("page", 0)
+                .queryParam("size", 10)
+                .when()
+                .get("/")
+                .then()
+                .extract().response();
+
+        Assertions.assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    @TestSecurity(user = "testUser", roles = {"pos_service_provider"})
+    @JwtSecurity(claims = {
+            @Claim(key = "sub", value = "1234567890")
+    })
+    void testGetTerminalsEndpoint_500TC() {
+        Mockito.when(terminalService.getTerminalCount("1234567890"))
+                .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .header("RequestId", "1a2b3c4d-5e6f-789a-bcde-f0123456789a")
+                .queryParam("page", 0)
+                .queryParam("size", 10)
+                .when()
+                .get("/")
+                .then()
+                .extract().response();
+
+        Assertions.assertEquals(500, response.statusCode());
+    }
+
+    @Test
+    @TestSecurity(user = "testUser", roles = {"pos_service_provider"})
+    @JwtSecurity(claims = {
+            @Claim(key = "sub", value = "1234567890")
+    })
+    void testGetTerminalsEndpoint_500TLP() {
+        Mockito.when(terminalService.getTerminalCount("1234567890"))
+                .thenReturn(Uni.createFrom().item(10L));
+
+        Mockito.when(terminalService.getTerminalListPaged("1234567890", 0, 10))
+                .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
+
+        Response response = given()
+                .contentType(ContentType.JSON)
+                .header("RequestId", "1a2b3c4d-5e6f-789a-bcde-f0123456789a")
+                .queryParam("page", 0)
+                .queryParam("size", 10)
+                .when()
+                .get("/")
                 .then()
                 .extract().response();
 
