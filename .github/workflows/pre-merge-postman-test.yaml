@@ -1,0 +1,20 @@
+name: Pull request review
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+      - edited
+      - synchronize
+      
+jobs:
+  check-postman:
+    runs-on: ubuntu-latest
+    environment: review-ci
+
+    steps:
+      - name: Run Postman collection
+        run: newman run src/test/postman/mil-terminal-registry.postman_collection.json -e src/test/postman/dev.postman_environment.json
+
