@@ -138,6 +138,46 @@
 				"description": "Creates a new terminal"
 			},
 			"response": []
+		},
+		{
+			"name": "get Terminal List",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "(Required) Request Id that will be logged by services",
+						"key": "RequestId",
+						"value": "<string>"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json"
+					}
+				],
+				"url": {
+					"raw": "{{baseUrl}}/terminals?page=<integer>&size=<integer>",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"terminals"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "<integer>",
+							"description": "(Required) Number of the requested page of data"
+						},
+						{
+							"key": "size",
+							"value": "<integer>",
+							"description": "(Required) Size of the requested page of data"
+						}
+					]
+				},
+				"description": "Returns a page of terminals"
+			},
+			"response": []
 		}
 	],
 	"auth": {
@@ -229,6 +269,14 @@
 		{
 			"key": "mil_tr_api_version",
 			"value": "1.0.0"
+		},
+		{
+			"key": "getTerminalPage",
+			"value": "1"
+		},
+		{
+			"key": "getTerminalPageSize",
+			"value": "10"
 		}
 	]
 }
