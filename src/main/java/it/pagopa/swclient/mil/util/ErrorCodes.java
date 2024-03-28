@@ -33,6 +33,8 @@ public final class ErrorCodes {
      */
     public static final String ERROR_DUPLICATE_KEY_FROM_DB                                       = MODULE_ID + "000200";
     public static final String ERROR_GENERIC_FROM_DB                                             = MODULE_ID + "000201";
+    public static final String ERROR_COUNTING_TERMINALS                                          = MODULE_ID + "000202";
+    public static final String ERROR_LIST_TERMINALS                                              = MODULE_ID + "000203";
 
 
 
@@ -55,6 +57,8 @@ public final class ErrorCodes {
 
     private static final String ERROR_DUPLICATE_KEY_FROM_DB_DESCR = "duplicate key violation";
     private static final String ERROR_GENERIC_FROM_DB_DESCR = "unexpected error from db";
+    private static final String ERROR_COUNTING_TERMINALS_DESCR = "error occurred while counting terminal";
+    private static final String ERROR_LIST_TERMINALS_DESCR = "error occurred while retrieving list of paginated terminals";
 
 
 
@@ -77,5 +81,7 @@ public final class ErrorCodes {
 
     public static final String ERROR_DUPLICATE_KEY_FROM_DB_MSG = "[" + ERROR_DUPLICATE_KEY_FROM_DB + "] " + ERROR_DUPLICATE_KEY_FROM_DB_DESCR;
     public static final String ERROR_GENERIC_FROM_DB_MSG = "[" + ERROR_GENERIC_FROM_DB + "] " + ERROR_GENERIC_FROM_DB_DESCR;
+    public static final String ERROR_COUNTING_TERMINALS_MSG = "[" + ERROR_COUNTING_TERMINALS + "] " + ERROR_COUNTING_TERMINALS_DESCR;
+    public static final String ERROR_LIST_TERMINALS_MSG = "[" + ERROR_LIST_TERMINALS + "] " + ERROR_LIST_TERMINALS_DESCR;
 
 }

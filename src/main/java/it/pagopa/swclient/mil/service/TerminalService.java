@@ -8,6 +8,7 @@ import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
 import it.pagopa.swclient.mil.util.Utility;
 import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.List;
 
 @ApplicationScoped
@@ -19,6 +20,14 @@ public class TerminalService {
         this.terminalRepository = terminalRepository;
     }
 
+
+    /**
+     * Create a new terminal starting from a terminalDto.
+     *
+     * @param terminalDto       dto of terminal to be generated
+     * @param serviceProviderId service provider id
+     * @return terminal created
+     */
     public Uni<TerminalEntity> createTerminal(String serviceProviderId, TerminalDto terminalDto) {
 
         Log.debugf("TerminalService -> createTerminal - Input parameters: %s", terminalDto);
@@ -28,8 +37,10 @@ public class TerminalService {
         TerminalEntity entity = createTerminalEntity(terminalDto, serviceProviderId, terminalUuid);
 
         return terminalRepository.persist(entity)
-                .onFailure().transform(error -> error)
-                .onItem().transform(terminalSaved -> terminalSaved);
+                .onFailure()
+                .transform(error -> error)
+                .onItem()
+                .transform(terminalSaved -> terminalSaved);
     }
 
     /**
@@ -39,18 +50,18 @@ public class TerminalService {
      * @param pageSize  page size
      * @return a list of terminals
      */
-    public Uni<List<TerminalEntity>> getTerminalListPaged(String serviceProviderId, int pageIndex,
-          int pageSize) {
+    public Uni<List<TerminalEntity>> getTerminalListPaged(String serviceProviderId, int pageIndex, int pageSize) {
 
         return terminalRepository
-              .find("serviceProviderId", serviceProviderId)
-              .page(pageIndex, pageSize)
-              .list();
+                .find("serviceProviderId", serviceProviderId)
+                .page(pageIndex, pageSize)
+                .list();
     }
 
     public Uni<Long> getTerminalCount(String serviceProviderId) {
+
         return terminalRepository
-              .count("serviceProviderId", serviceProviderId);
+                .count("serviceProviderId", serviceProviderId);
     }
 
     private TerminalEntity createTerminalEntity(TerminalDto terminalDto, String serviceProviderId, String terminalUuid) {

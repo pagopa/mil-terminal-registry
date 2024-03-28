@@ -1,8 +1,5 @@
 package it.pagopa.swclient.mil.service;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-
 import com.mongodb.MongoWriteException;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteError;
@@ -15,13 +12,17 @@ import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
 import it.pagopa.swclient.mil.util.TerminalTestData;
-import java.util.List;
 import org.bson.BsonDocument;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.mockito.Mockito;
+
+import java.util.List;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 
 @QuarkusTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -51,7 +52,8 @@ class TerminalServiceTest {
 
         Uni<TerminalEntity> result = terminalService.createTerminal("1234567890", terminalDto);
 
-        result.subscribe().with(entity -> Assertions.assertEquals(terminalEntity, entity));
+        result.subscribe()
+                .with(entity -> Assertions.assertEquals(terminalEntity, entity));
     }
 
     @Test
@@ -79,30 +81,30 @@ class TerminalServiceTest {
         var terminalList = terminalService.getTerminalListPaged("serviceProviderId", 0, 10);
 
         terminalList
-            .subscribe()
-            .withSubscriber(UniAssertSubscriber.create())
-            .assertItem(mockedList());
+                .subscribe()
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertItem(mockedList());
     }
 
     @Test
     void whenGetTerminalCountThenSuccess() {
         Mockito.when(terminalRepository.count("serviceProviderId", "serviceProviderId"))
-            .thenReturn(Uni.createFrom().item(10L));
+                .thenReturn(Uni.createFrom().item(10L));
 
         var terminalCount = terminalService.getTerminalCount("serviceProviderId");
 
         terminalCount
-            .subscribe()
-            .withSubscriber(UniAssertSubscriber.create())
-            .assertItem(10L);
+                .subscribe()
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertItem(10L);
     }
 
     private List<TerminalEntity> mockedList() {
         return List.of(
-            TerminalEntity.builder()
-                .terminalUuid("uuid1").build(),
-            TerminalEntity.builder()
-                .terminalUuid("uuid2").build()
+                TerminalEntity.builder()
+                        .terminalUuid("uuid1").build(),
+                TerminalEntity.builder()
+                        .terminalUuid("uuid2").build()
         );
     }
 }
