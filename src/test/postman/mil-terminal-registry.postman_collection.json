@@ -25,7 +25,7 @@
 							"    pm.test(\"Token type\", function () {\r",
 							"        var jsonData = pm.response.json();\r",
 							"        pm.expect(jsonData.token_type).to.eql(\"Bearer\");\r",
-							"         pm.environment.set(\"access_token_nodo\", jsonData.access_token);\r",
+							"         pm.environment.set(\"access_token_tr\", jsonData.access_token);\r",
 							"\r",
 							"    });\r",
 							"\r",
@@ -145,7 +145,7 @@
 		"bearer": [
 			{
 				"key": "token",
-				"value": "{{bearerToken}}",
+				"value": "{{access_token_tr}}",
 				"type": "string"
 			}
 		]
