@@ -62,7 +62,7 @@
 					},
 					{
 						"key": "Version",
-						"value": "{{mil_tr_api_version}}",
+						"value": "{{mil_auth_api_version}}",
 						"type": "text"
 					}
 				],
@@ -87,9 +87,9 @@
 					]
 				},
 				"url": {
-					"raw": "{{MIL_TR_BASE_URL}}/token",
+					"raw": "{{MIL_AUTH_BASE_URL}}/token",
 					"host": [
-						"{{MIL_TR_BASE_URL}}"
+						"{{MIL_AUTH_BASE_URL}}"
 					],
 					"path": [
 						"token"
@@ -127,9 +127,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{baseUrl}}/terminals",
+					"raw": "{{MIL_TR_BASE_URL}}/terminals",
 					"host": [
-						"{{baseUrl}}"
+						"{{MIL_TR_BASE_URL}}"
 					],
 					"path": [
 						"terminals"
@@ -171,11 +171,6 @@
 		}
 	],
 	"variable": [
-		{
-			"key": "baseUrl",
-			"value": "https://mil-d-apim.azure-api.net/mil-terminal-registry",
-			"type": "string"
-		},
 		{
 			"key": "terminalHandlerId",
 			"value": "45856",
@@ -227,7 +222,7 @@
 			"type": "string"
 		},
 		{
-			"key": "mil_tr_api_version",
+			"key": "mil_auth_api_version",
 			"value": "1.0.0"
 		}
 	]
