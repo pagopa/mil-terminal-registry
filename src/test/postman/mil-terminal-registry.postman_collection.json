@@ -155,9 +155,9 @@
 					}
 				],
 				"url": {
-					"raw": "{{baseUrl}}/terminals?page=<integer>&size=<integer>",
+					"raw": "{{MIL_AUTH_BASE_URL}}/terminals?page=<integer>&size=<integer>",
 					"host": [
-						"{{baseUrl}}"
+						"{{MIL_AUTH_BASE_URL}}"
 					],
 					"path": [
 						"terminals"
