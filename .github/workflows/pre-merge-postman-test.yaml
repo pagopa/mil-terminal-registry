@@ -84,5 +84,4 @@ jobs:
       # Run Postman collection.
       #
       - name: Run Postman collection
-        run: newman run src/test/postman/mil-terminal-registry.postman_collection.json -e src/test/postman/dev.postman_environment.json
-        
+        run: newman run src/test/postman/mil-terminal-registry.postman_collection.json -e src/test/postman/dev.postman_environment.json --env-var "tr_token_client_id=${{ secrets.NEWMAN_IT__TR_TOKEN_CLIENT_ID }}" --env-var "tr_token_client_secret=${{ secrets.NEWMAN_IT__TR_TOKEN_CLIENT_SECRET }}"

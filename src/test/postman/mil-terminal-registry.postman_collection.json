@@ -77,7 +77,7 @@
 						{
 							"key": "client_id",
 							"value": "{{tr_token_client_id}}",
-							"type": "text"
+							"type": "text"	
 						},
 						{
 							"key": "client_secret",
