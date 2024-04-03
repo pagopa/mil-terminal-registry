@@ -155,7 +155,7 @@
 					}
 				],
 				"url": {
-					"raw": "{{MIL_AUTH_BASE_URL}}/terminals?page=<integer>&size=<integer>",
+					"raw": "{{MIL_AUTH_BASE_URL}}/terminals?page={{getTerminalPage}}&size={{getTerminalPageSize}}",
 					"host": [
 						"{{MIL_AUTH_BASE_URL}}"
 					],
@@ -165,12 +165,12 @@
 					"query": [
 						{
 							"key": "page",
-							"value": "<integer>",
+							"value": "{{getTerminalPage}}",
 							"description": "(Required) Number of the requested page of data"
 						},
 						{
 							"key": "size",
-							"value": "<integer>",
+							"value": "{{getTerminalPageSize}}",
 							"description": "(Required) Size of the requested page of data"
 						}
 					]
