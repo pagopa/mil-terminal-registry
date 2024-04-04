@@ -9,7 +9,7 @@ on:
 
 jobs:
   checkOpenApi:
-    name: Check OpenApi
+    name: Diff with main
     runs-on: ubuntu-latest
 
     steps:
