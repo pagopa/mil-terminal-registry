@@ -35,5 +35,5 @@ jobs:
           cmd: yq '.info.version' openapi.yaml
 
       - name: Fail if version are equals
-        if: steps.branch_openapi_version.output.result != steps.main_openapi_version.output.result
+        if: steps.branch_openapi_version.output.result == steps.main_openapi_version.output.result
         run: exit 1
