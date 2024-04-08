@@ -1,0 +1,39 @@
+name: Check OpenApi version
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'src/main/resources/META-INF/openapi.yaml'
+
+jobs:
+  checkOpenApi:
+    name: Diff with main
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout the source code
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 #v4.1.1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Get the branch openapi version
+        id: branch_openapi_version
+        uses: mikefarah/yq@c35ec752e38ea0c096d3c44e13cfc0797ac394d8 #v4.43.1
+        with:
+          cmd: yq '.info.version' src/main/resources/META-INF/openapi.yaml
+
+      - name: Download openapi main
+        run: wget https://raw.githubusercontent.com/pagopa/mil-terminal-registry/main/src/main/resources/META-INF/openapi.yaml
+
+      - name: Get the main openapi version
+        id: main_openapi_version
+        uses: mikefarah/yq@c35ec752e38ea0c096d3c44e13cfc0797ac394d8 #v4.43.1
+        with:
+          cmd: yq '.info.version' openapi.yaml
+
+      - name: Fail if versions are equals
+        if: steps.branch_openapi_version.output.result == steps.main_openapi_version.output.result
+        run: exit 1
