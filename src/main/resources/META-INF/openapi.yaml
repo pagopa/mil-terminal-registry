@@ -75,7 +75,7 @@ paths:
 
     get:
       operationId: getTerminalList
-      description: Returns a page
+      description: Returns a page of terminals
       tags: [ read ]
       parameters:
         - $ref: '#/components/parameters/PageNumber'
