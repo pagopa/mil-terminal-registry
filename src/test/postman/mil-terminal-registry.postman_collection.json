@@ -57,7 +57,7 @@
 				"header": [
 					{
 						"key": "RequestId",
-						"value": "{{$guid}}",
+						"value": "{{requestId}}",
 						"type": "text"
 					},
 					{
@@ -106,15 +106,7 @@
 					{
 						"description": "(Required) Request Id that will be logged by services",
 						"key": "RequestId",
-						"value": "{{$guid}}"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Accept",
-						"value": "application/json"
+						"value": "{{requestId}}"
 					}
 				],
 				"body": {
@@ -147,7 +139,7 @@
 					{
 						"description": "(Required) Request Id that will be logged by services",
 						"key": "RequestId",
-						"value": "{{$guid}}"
+						"value": "{{requestId}}"
 					}
 				],
 				"url": {
@@ -268,6 +260,10 @@
 		{
 			"key": "getTerminalPageSize",
 			"value": "10"
+		},
+		{
+			"key": "requestId",
+			"value": "d0d654e6-97da-4848-b568-99fedccb642b"
 		}
 	]
 }
