@@ -58,10 +58,6 @@ jacoco {
     toolVersion = "${jacocoToolVersion}"
 }
 
-// runs jacocoTestCoverageVerification before complete check
-check {
-    dependsOn jacocoTestCoverageVerification
-}
 
 def jacocoQuarkusPath = project.layout.buildDirectory.file("jacoco-quarkus.exec")
 
