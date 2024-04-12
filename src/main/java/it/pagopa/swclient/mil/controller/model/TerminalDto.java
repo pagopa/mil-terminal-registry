@@ -6,6 +6,8 @@ import it.pagopa.swclient.mil.util.RegexPatterns;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 
+import java.util.List;
+
 public record TerminalDto(@NotNull(message = ErrorCodes.ERROR_TERMINALHANDLERID_MUST_NOT_BE_NULL_MSG)
                           @Pattern(regexp = RegexPatterns.MAX_FIVE_NUM_PATTERN)
                           String terminalHandlerId,
@@ -19,6 +21,7 @@ public record TerminalDto(@NotNull(message = ErrorCodes.ERROR_TERMINALHANDLERID_
                           String payeeCode,
                           @NotNull(message = ErrorCodes.ERROR_SLAVE_MUST_NOT_BE_NULL_MSG)
                           Boolean slave,
+                          List<String> workstations,
                           @NotNull(message = ErrorCodes.ERROR_PAGOPA_MUST_NOT_BE_NULL_MSG)
                           Boolean pagoPa,
                           PagoPaConf pagoPaConf,

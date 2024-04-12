@@ -124,4 +124,60 @@ public class TerminalResource {
                             });
                 });
     }
+
+    @PATCH
+    @Path("/{terminalUuid}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"pos_service_provider"})
+    public Uni<Response> updateTerminal(
+            @HeaderParam("RequestId") @NotNull(message = ErrorCodes.ERROR_REQUESTID_MUST_NOT_BE_NULL_MSG) @Pattern(regexp = RegexPatterns.REQUEST_ID_PATTERN) String requestId,
+            @Valid @NotNull(message = ErrorCodes.ERROR_TERMINALDTO_MUST_NOT_BE_NULL_MSG) TerminalDto terminal,
+            @PathParam(value = "terminalUuid") String terminalUuid) {
+
+        Log.debugf("TerminalResource -> updateTerminal - Input requestId, updateTerminal: %s, %s", requestId, terminal);
+
+        String serviceProviderId = jwt.getSubject();
+
+        return terminalService.findTerminal(serviceProviderId, terminalUuid)
+                .onFailure()
+                .transform(err -> {
+                    Log.errorf(err, "TerminalResource -> updateTerminal: error during search terminal with terminalUuid, serviceProviderId: [%s, %s]", terminalUuid, serviceProviderId);
+
+                    return new InternalServerErrorException(Response
+                            .status(Response.Status.INTERNAL_SERVER_ERROR)
+                            .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB, ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
+                            .build());
+                })
+                .onItem()
+                .transformToUni(terminalEntity -> {
+                    if (terminalEntity == null) {
+                        Log.errorf("TerminalResource -> updateTerminal: error 404 during searching terminal with terminalUuid, serviceProviderId: [%s, %s]", terminalUuid, serviceProviderId);
+
+                        return Uni.createFrom().failure(new NotFoundException(Response
+                                .status(Response.Status.NOT_FOUND)
+                                .entity(new Errors(ErrorCodes.ERROR_TERMINAL_NOT_FOUND, ErrorCodes.ERROR_TERMINAL_NOT_FOUND_MSG))
+                                .build()));
+                    }
+                    Log.info(terminalEntity);
+                    return terminalService.updateTerminal(terminalUuid, serviceProviderId, terminal)
+                            .onFailure()
+                            .transform(err -> {
+                                Log.errorf(err, "TerminalResource -> updateTerminal: error during update terminal [%s]", terminal);
+
+                                return new InternalServerErrorException(Response
+                                        .status(Response.Status.INTERNAL_SERVER_ERROR)
+                                        .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB, ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
+                                        .build());
+                            })
+                            .onItem()
+                            .transform(terminalUpdated -> {
+                                Log.debugf("TerminalResource -> updateTerminal: terminal updated correctly on DB [%s]", terminalUpdated);
+
+                                return Response
+                                        .status(Response.Status.NO_CONTENT)
+                                        .build();
+                            });
+                });
+    }
 }
