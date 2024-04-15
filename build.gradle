@@ -20,10 +20,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-mongodb-panache-common'
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'org.eclipse.microprofile.jwt:microprofile-jwt-auth-api'
-    implementation 'io.quarkus:quarkus-smallrye-jwt'
-    implementation 'io.quarkus:quarkus-test-security'
-    implementation 'io.quarkus:quarkus-test-security-jwt'
-
+    implementation 'io.quarkus:quarkus-smallrye-jwt'    
+    testImplementation 'io.quarkus:quarkus-test-security'
+    testImplementation 'io.quarkus:quarkus-test-security-jwt'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation "io.quarkus:quarkus-jacoco"
