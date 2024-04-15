@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "getTerminalRegistryAccessToken",
+			"name": "Get Terminal Registry Access Token",
 			"event": [
 				{
 					"listen": "test",
@@ -99,7 +99,7 @@
 			"response": []
 		},
 		{
-			"name": "createTerminal",
+			"name": "Create New Terminal",
 			"event": [
 				{
 					"listen": "test",
@@ -147,7 +147,7 @@
 			"response": []
 		},
 		{
-			"name": "get Terminal List",
+			"name": "Get Terminal List",
 			"event": [
 				{
 					"listen": "test",
