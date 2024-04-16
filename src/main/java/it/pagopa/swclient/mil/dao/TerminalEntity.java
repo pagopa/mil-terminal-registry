@@ -3,9 +3,12 @@ package it.pagopa.swclient.mil.dao;
 
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import lombok.Builder;
+import lombok.*;
 
 @Builder
+@Getter
+@ToString
+@Data
 @MongoEntity(database = "mil", collection = "terminalRegistry")
 public class TerminalEntity{
 
