@@ -59,6 +59,14 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   
       #
+      # RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar.
+      #
+      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + Sonar
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification sonar
+  
+      #
       # Install Node.
       #
       - name: Install Node
