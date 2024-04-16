@@ -9,6 +9,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.helpers.test.UniAssertSubscriber;
 import it.pagopa.swclient.mil.controller.model.TerminalDto;
+import it.pagopa.swclient.mil.dao.Terminal;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
 import it.pagopa.swclient.mil.util.TerminalTestData;
@@ -101,10 +102,8 @@ class TerminalServiceTest {
 
     private List<TerminalEntity> mockedList() {
         return List.of(
-                TerminalEntity.builder()
-                        .terminalUuid("uuid1").build(),
-                TerminalEntity.builder()
-                        .terminalUuid("uuid2").build()
+                new TerminalEntity("uuid1","","", null),
+                new TerminalEntity("uuid2","","",null)
         );
     }
 }

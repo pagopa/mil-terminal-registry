@@ -22,10 +22,6 @@ public final class TerminalTestData {
                 .idpay(true)
                 .build();
 
-        return TerminalEntity.builder()
-                .terminalUuid("c7a1b24b0583477292ebdbaa")
-                .terminalHandler("45856")
-                .terminal(terminal)
-                .build();
+        return new TerminalEntity("c7a1b24b0583477292ebdbaa","","45856",terminal);
     }
 }
