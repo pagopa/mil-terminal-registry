@@ -76,6 +76,11 @@ public class TerminalService {
                 .idpay(terminalDto.idpay())
                 .build();
 
-        return new  TerminalEntity(terminalUuid,terminalDto.terminalHandlerId(),serviceProviderId,terminal);
+        return TerminalEntity.builder()
+                .terminalUuid(terminalUuid)
+                .terminalHandler(terminalDto.terminalHandlerId())
+                .serviceProviderId(serviceProviderId)
+                .terminal(terminal)
+                .build();
     }
 }
