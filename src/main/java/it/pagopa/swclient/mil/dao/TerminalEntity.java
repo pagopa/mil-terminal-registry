@@ -5,7 +5,6 @@ import lombok.*;
 
 @ToString
 @Data
-@Builder
 @Getter
 @MongoEntity(database = "mil", collection = "terminalRegistry")
 public class TerminalEntity {
@@ -17,4 +16,14 @@ public class TerminalEntity {
     private String serviceProviderId;
 
     private Terminal terminal;
+
+    public TerminalEntity() {
+    }
+
+    public TerminalEntity(String terminalUuid, String terminalHandler, String serviceProviderId, Terminal terminal) {
+        this.terminalUuid = terminalUuid;
+        this.terminalHandler = terminalHandler;
+        this.serviceProviderId = serviceProviderId;
+        this.terminal = terminal;
+    }
 }
