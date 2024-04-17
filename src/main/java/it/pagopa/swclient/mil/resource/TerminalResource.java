@@ -159,7 +159,7 @@ public class TerminalResource {
                                 .entity(new Errors(ErrorCodes.ERROR_TERMINAL_NOT_FOUND, ErrorCodes.ERROR_TERMINAL_NOT_FOUND_MSG))
                                 .build()));
                     }
-                    Log.info(terminalEntity);
+
                     return terminalService.updateTerminal(terminalUuid, serviceProviderId, terminal)
                             .onFailure()
                             .transform(err -> {

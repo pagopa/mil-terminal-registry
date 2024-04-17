@@ -132,7 +132,8 @@ class TerminalServiceTest {
         Uni<TerminalEntity> result = terminalService.updateTerminal("terminalUuid", "serviceProviderId", terminalDto);
 
         result.subscribe()
-                .with(entity -> Assertions.assertEquals(terminalEntity, entity));
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertFailedWith(WebApplicationException.class);
     }
 
 
