@@ -8,7 +8,6 @@ import org.bson.codecs.pojo.annotations.BsonId;
 @MongoEntity(database = "mil", collection = "terminalRegistry")
 public class TerminalEntity{
 
-    @BsonId
     public String terminalUuid;
 
     public String terminalHandler;
