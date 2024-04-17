@@ -21,11 +21,11 @@ public final class TerminalTestData {
                 .pagoPaConf(null)
                 .idpay(true)
                 .build();
-
-        return TerminalEntity.builder()
-                .terminalUuid("c7a1b24b0583477292ebdbaa")
-                .terminalHandler("45856")
-                .terminal(terminal)
-                .build();
+        
+        TerminalEntity terminalEntity = new TerminalEntity();
+        terminalEntity.terminalUuid = "c7a1b24b0583477292ebdbaa";
+        terminalEntity.terminalHandler = "45856";
+        terminalEntity.terminal = terminal;
+        return terminalEntity;
     }
 }

@@ -3,15 +3,12 @@ package it.pagopa.swclient.mil.dao;
 
 
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import lombok.*;
+import org.bson.codecs.pojo.annotations.BsonId;
 
-@Builder
-@Getter
-@ToString
-@Data
 @MongoEntity(database = "mil", collection = "terminalRegistry")
 public class TerminalEntity{
 
+    @BsonId
     public String terminalUuid;
 
     public String terminalHandler;

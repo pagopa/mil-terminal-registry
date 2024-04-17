@@ -73,17 +73,25 @@ class TerminalServiceTest {
 
     @Test
     void whenGetTerminalListThenSuccess() {
+        TerminalEntity terminalEntity1 = new TerminalEntity();
+        TerminalEntity terminalEntity2 = new TerminalEntity();
+        terminalEntity1.terminalUuid = "uuid1";
+        terminalEntity1.serviceProviderId = "serviceProviderId";
+        terminalEntity2.terminalUuid = "uuid2";
+        terminalEntity2.serviceProviderId = "serviceProviderId";
+        List<TerminalEntity> terminalEntities= List.of(terminalEntity1,terminalEntity2);
+
         ReactivePanacheQuery<TerminalEntity> query = Mockito.mock(ReactivePanacheQuery.class);
         Mockito.when(query.page(anyInt(), anyInt())).thenReturn(query);
-        Mockito.when(query.list()).thenReturn(Uni.createFrom().item(mockedList()));
+        Mockito.when(query.list()).thenReturn(Uni.createFrom().item(terminalEntities));
         Mockito.when(terminalRepository.find("serviceProviderId", "serviceProviderId")).thenReturn(query);
 
         var terminalList = terminalService.getTerminalListPaged("serviceProviderId", 0, 10);
-
         terminalList
                 .subscribe()
                 .withSubscriber(UniAssertSubscriber.create())
-                .assertItem(mockedList());
+                .assertItem(terminalEntities);
+
     }
 
     @Test
@@ -99,12 +107,5 @@ class TerminalServiceTest {
                 .assertItem(10L);
     }
 
-    private List<TerminalEntity> mockedList() {
-        return List.of(
-                TerminalEntity.builder()
-                        .terminalUuid("uuid1").build(),
-                TerminalEntity.builder()
-                        .terminalUuid("uuid2").build()
-        );
-    }
+
 }
