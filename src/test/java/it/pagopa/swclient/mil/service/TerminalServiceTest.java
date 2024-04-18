@@ -12,6 +12,7 @@ import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
 import it.pagopa.swclient.mil.util.TerminalTestData;
+import jakarta.ws.rs.WebApplicationException;
 import org.bson.BsonDocument;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -97,6 +98,43 @@ class TerminalServiceTest {
                 .subscribe()
                 .withSubscriber(UniAssertSubscriber.create())
                 .assertItem(10L);
+    }
+
+    @Test
+    void testFindTerminal_Success() {
+        ReactivePanacheQuery<TerminalEntity> query = Mockito.mock(ReactivePanacheQuery.class);
+        Mockito.when(query.firstResult()).thenReturn(Uni.createFrom().item(terminalEntity));
+        Mockito.when(terminalRepository.find("serviceProviderId = ?1 and _id = ?2", "serviceProviderId", "terminalUuid")).thenReturn(query);
+
+        Uni<TerminalEntity> terminalEntityUni = terminalService.findTerminal("serviceProviderId", "terminalUuid");
+
+        terminalEntityUni
+                .subscribe()
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertItem(terminalEntity);
+    }
+
+    @Test
+    void testDeleteTerminal_Success() {
+        Mockito.when(terminalRepository.delete(any(TerminalEntity.class)))
+                .thenReturn(Uni.createFrom().voidItem());
+
+        Uni<Void> result = terminalService.deleteTerminal(terminalEntity);
+
+        result.subscribe()
+                .with(Assertions::assertNull);
+    }
+
+    @Test
+    void testDeleteTerminal_Failure() {
+        Mockito.when(terminalRepository.delete(any(TerminalEntity.class)))
+                .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
+
+        Uni<Void> result = terminalService.deleteTerminal(terminalEntity);
+
+        result.subscribe()
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertFailedWith(WebApplicationException.class);
     }
 
     private List<TerminalEntity> mockedList() {

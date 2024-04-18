@@ -83,4 +83,33 @@ public class TerminalService {
                 .terminal(terminal)
                 .build();
     }
+
+    /**
+     * Find first terminal equals to serviceProviderId and terminalUuid given in input.
+     *
+     * @param serviceProviderId service provider id
+     * @param terminalUuid      uuid of terminal
+     * @return terminal founded
+     */
+    public Uni<TerminalEntity> findTerminal(String serviceProviderId, String terminalUuid) {
+
+        return terminalRepository
+                .find("serviceProviderId = ?1 and _id = ?2", serviceProviderId, terminalUuid)
+                .firstResult();
+    }
+
+    /**
+     * Update terminal starting from a terminalDto.
+     *
+     * @param terminal      terminal to be deleted
+     * @return void
+     */
+    public Uni<Void> deleteTerminal(TerminalEntity terminal) {
+
+        return terminalRepository.delete(terminal)
+                .onFailure()
+                .transform(error -> error)
+                .onItem()
+                .transform(terminalDeleted -> terminalDeleted);
+    }
 }
