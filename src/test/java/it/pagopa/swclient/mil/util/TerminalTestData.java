@@ -28,7 +28,7 @@ public final class TerminalTestData {
         terminalEntity.setTerminalUuid("c7a1b24b0583477292ebdbaa");
         terminalEntity.setTerminalHandler("45856");
         terminalEntity.setTerminal(terminal);
-
+      
         return terminalEntity;
     }
 }

@@ -8,7 +8,7 @@
 	},
 	"item": [
 		{
-			"name": "getTerminalRegistryAccessToken",
+			"name": "Get Terminal Registry Access Token",
 			"event": [
 				{
 					"listen": "test",
@@ -57,7 +57,7 @@
 				"header": [
 					{
 						"key": "RequestId",
-						"value": "{{$guid}}",
+						"value": "{{requestId}}",
 						"type": "text"
 					},
 					{
@@ -99,22 +99,29 @@
 			"response": []
 		},
 		{
-			"name": "createTerminal",
+			"name": "Create New Terminal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [
 					{
 						"description": "(Required) Request Id that will be logged by services",
 						"key": "RequestId",
-						"value": "{{$guid}}"
-					},
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					},
-					{
-						"key": "Accept",
-						"value": "application/json"
+						"value": "{{requestId}}"
 					}
 				],
 				"body": {
@@ -136,6 +143,57 @@
 					]
 				},
 				"description": "Creates a new terminal"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Terminal List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "(Required) Request Id that will be logged by services",
+						"key": "RequestId",
+						"value": "{{requestId}}"
+					}
+				],
+				"url": {
+					"raw": "{{MIL_TR_BASE_URL}}/terminals?page={{getTerminalPage}}&size={{getTerminalPageSize}}",
+					"host": [
+						"{{MIL_TR_BASE_URL}}"
+					],
+					"path": [
+						"terminals"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{getTerminalPage}}",
+							"description": "(Required) Number of the requested page of data"
+						},
+						{
+							"key": "size",
+							"value": "{{getTerminalPageSize}}",
+							"description": "(Required) Size of the requested page of data"
+						}
+					]
+				},
+				"description": "Returns a page of terminals"
 			},
 			"response": []
 		}
@@ -224,6 +282,18 @@
 		{
 			"key": "mil_auth_api_version",
 			"value": "1.0.0"
+		},
+		{
+			"key": "getTerminalPage",
+			"value": "0"
+		},
+		{
+			"key": "getTerminalPageSize",
+			"value": "10"
+		},
+		{
+			"key": "requestId",
+			"value": "d0d654e6-97da-4848-b568-99fedccb642b"
 		}
 	]
 }
