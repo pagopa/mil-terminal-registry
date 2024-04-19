@@ -1,4 +1,4 @@
-name: Pull request review
+name: Postman Test
 
 on:
   pull_request:
