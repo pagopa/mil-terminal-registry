@@ -75,7 +75,7 @@ public class TerminalService {
     public Uni<TerminalEntity> findTerminal(String serviceProviderId, String terminalUuid) {
 
         return terminalRepository
-                .find("serviceProviderId = ?1 and _id = ?2", serviceProviderId, terminalUuid)
+                .find("serviceProviderId = ?1 and terminalUuid = ?2", serviceProviderId, terminalUuid)
                 .firstResult();
     }
 
@@ -87,9 +87,10 @@ public class TerminalService {
      * @param serviceProviderId service provider id
      * @return terminal updated
      */
-    public Uni<TerminalEntity> updateTerminal(String terminalUuid, String serviceProviderId, TerminalDto terminalDto) {
+    public Uni<TerminalEntity> updateTerminal(String terminalUuid, String serviceProviderId, TerminalDto terminalDto, TerminalEntity oldTerminal) {
 
         TerminalEntity entity = createTerminalEntity(terminalDto, serviceProviderId, terminalUuid);
+        entity.setId(oldTerminal.getId());
 
         return terminalRepository.update(entity)
                 .onFailure()

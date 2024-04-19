@@ -223,7 +223,7 @@ class TerminalResourceTest {
         Mockito.when(terminalService.findTerminal(any(String.class), any(String.class)))
                 .thenReturn(Uni.createFrom().item(terminalEntity));
 
-        Mockito.when(terminalService.updateTerminal(any(String.class), any(String.class), any(TerminalDto.class)))
+        Mockito.when(terminalService.updateTerminal(any(String.class), any(String.class), any(TerminalDto.class), any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().item(terminalEntity));
 
         Response response = given()
@@ -294,7 +294,7 @@ class TerminalResourceTest {
         Mockito.when(terminalService.findTerminal(any(String.class), any(String.class)))
                 .thenReturn(Uni.createFrom().item(terminalEntity));
 
-        Mockito.when(terminalService.updateTerminal(any(String.class), any(String.class), any(TerminalDto.class)))
+        Mockito.when(terminalService.updateTerminal(any(String.class), any(String.class), any(TerminalDto.class), any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
 
         Response response = given()

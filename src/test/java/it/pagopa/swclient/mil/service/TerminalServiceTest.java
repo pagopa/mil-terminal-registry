@@ -103,7 +103,7 @@ class TerminalServiceTest {
     void testFindTerminal_Success() {
         ReactivePanacheQuery<TerminalEntity> query = Mockito.mock(ReactivePanacheQuery.class);
         Mockito.when(query.firstResult()).thenReturn(Uni.createFrom().item(terminalEntity));
-        Mockito.when(terminalRepository.find("serviceProviderId = ?1 and _id = ?2", "serviceProviderId", "terminalUuid")).thenReturn(query);
+        Mockito.when(terminalRepository.find("serviceProviderId = ?1 and terminalUuid = ?2", "serviceProviderId", "terminalUuid")).thenReturn(query);
 
         Uni<TerminalEntity> terminalEntityUni = terminalService.findTerminal("serviceProviderId", "terminalUuid");
 
@@ -118,7 +118,7 @@ class TerminalServiceTest {
         Mockito.when(terminalRepository.update(any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().item(terminalEntity));
 
-        Uni<TerminalEntity> result = terminalService.updateTerminal("terminalUuid", "serviceProviderId", terminalDto);
+        Uni<TerminalEntity> result = terminalService.updateTerminal("terminalUuid", "serviceProviderId", terminalDto, terminalEntity);
 
         result.subscribe()
                 .with(entity -> Assertions.assertEquals(terminalEntity, entity));
@@ -129,7 +129,7 @@ class TerminalServiceTest {
         Mockito.when(terminalRepository.update(any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
 
-        Uni<TerminalEntity> result = terminalService.updateTerminal("terminalUuid", "serviceProviderId", terminalDto);
+        Uni<TerminalEntity> result = terminalService.updateTerminal("terminalUuid", "serviceProviderId", terminalDto, terminalEntity);
 
         result.subscribe()
                 .withSubscriber(UniAssertSubscriber.create())

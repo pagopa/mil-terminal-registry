@@ -160,7 +160,7 @@ public class TerminalResource {
                                 .build()));
                     }
 
-                    return terminalService.updateTerminal(terminalUuid, serviceProviderId, terminal)
+                    return terminalService.updateTerminal(terminalUuid, serviceProviderId, terminal, terminalEntity)
                             .onFailure()
                             .transform(err -> {
                                 Log.errorf(err, "TerminalResource -> updateTerminal: error during update terminal [%s]", terminal);
