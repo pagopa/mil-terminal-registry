@@ -90,7 +90,7 @@ public class TerminalService {
     public Uni<TerminalEntity> updateTerminal(String terminalUuid, String serviceProviderId, TerminalDto terminalDto, TerminalEntity oldTerminal) {
 
         TerminalEntity entity = createTerminalEntity(terminalDto, serviceProviderId, terminalUuid);
-        entity.setId(oldTerminal.getId());
+        entity.id = oldTerminal.id;
 
         return terminalRepository.update(entity)
                 .onFailure()
@@ -112,10 +112,10 @@ public class TerminalService {
         terminal.setWorkstations(terminalDto.workstations());
 
         TerminalEntity terminalEntity = new TerminalEntity();
-        terminalEntity.setTerminalUuid(terminalUuid);
-        terminalEntity.setTerminalHandler(terminalDto.terminalHandlerId());
-        terminalEntity.setServiceProviderId(serviceProviderId);
-        terminalEntity.setTerminal(terminal);
+        terminalEntity.terminalUuid = terminalUuid;
+        terminalEntity.terminalHandler = terminalDto.terminalHandlerId();
+        terminalEntity.serviceProviderId = serviceProviderId;
+        terminalEntity.terminal = terminal;
 
         return terminalEntity;
     }

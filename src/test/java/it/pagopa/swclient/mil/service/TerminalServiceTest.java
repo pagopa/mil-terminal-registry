@@ -140,9 +140,9 @@ class TerminalServiceTest {
 
     private List<TerminalEntity> mockedList() {
         TerminalEntity te1 = new TerminalEntity();
-        te1.setTerminalUuid("uuid1");
+        te1.terminalUuid = "uuid1";
         TerminalEntity te2 = new TerminalEntity();
-        te2.setTerminalUuid("uuid2");
+        te2.terminalUuid = "uuid2";
 
         return List.of(te1, te2);
     }

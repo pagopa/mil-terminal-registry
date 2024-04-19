@@ -25,9 +25,9 @@ public final class TerminalTestData {
         terminal.setIdpay(true);
 
         TerminalEntity terminalEntity = new TerminalEntity();
-        terminalEntity.setTerminalUuid("c7a1b24b0583477292ebdbaa");
-        terminalEntity.setTerminalHandler("45856");
-        terminalEntity.setTerminal(terminal);
+        terminalEntity.terminalUuid = "c7a1b24b0583477292ebdbaa";
+        terminalEntity.terminalHandler = "45856";
+        terminalEntity.terminal = terminal;
       
         return terminalEntity;
     }
