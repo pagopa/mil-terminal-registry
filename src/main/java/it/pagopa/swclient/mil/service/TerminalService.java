@@ -112,10 +112,10 @@ public class TerminalService {
         terminal.setWorkstations(terminalDto.workstations());
 
         TerminalEntity terminalEntity = new TerminalEntity();
-        terminalEntity.terminalUuid = terminalUuid;
-        terminalEntity.terminalHandler = terminalDto.terminalHandlerId();
-        terminalEntity.serviceProviderId = serviceProviderId;
-        terminalEntity.terminal = terminal;
+        terminalEntity.setTerminalUuid(terminalUuid);
+        terminalEntity.setTerminalHandler(terminalDto.terminalHandlerId());
+        terminalEntity.setServiceProviderId(serviceProviderId);
+        terminalEntity.setTerminal(terminal);
 
         return terminalEntity;
     }

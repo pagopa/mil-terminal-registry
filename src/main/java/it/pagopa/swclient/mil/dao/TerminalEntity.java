@@ -1,27 +1,20 @@
 package it.pagopa.swclient.mil.dao;
 
+import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import lombok.EqualsAndHashCode;
-import org.bson.codecs.pojo.annotations.BsonId;
-import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.bson.types.ObjectId;
+import lombok.Getter;
+import lombok.Setter;
 
-@EqualsAndHashCode
+@Getter
+@Setter
 @MongoEntity(database = "mil", collection = "terminalRegistry")
-public class TerminalEntity {
+public class TerminalEntity extends PanacheMongoEntity {
 
-    @BsonProperty("_id")
-    @BsonId
-    public ObjectId id;
+    private String terminalUuid;
 
-    @BsonProperty("terminalUuid")
-    public String terminalUuid;
+    private String terminalHandler;
 
-    @BsonProperty("terminalHandler")
-    public String terminalHandler;
+    private String serviceProviderId;
 
-    @BsonProperty("serviceProviderId")
-    public String serviceProviderId;
-
-    public Terminal terminal;
+    private Terminal terminal;
 }
