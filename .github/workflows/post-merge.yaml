@@ -197,6 +197,22 @@ jobs:
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}@${{ steps.docker_build_push_stable.outputs.digest }}
 
+      - name: Update OpenAPI 
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: |
+          API_DATA=$(az apim api show --resource-group mil-d-integration-rg --service-name mil-d-apim --api-id mil-d-payment-notice --query "{path:path, serviceUrl:serviceUrl}")
+          API_PATH=$(echo $API_DATA | jq -r '.path')
+          API_SERVICE_URL=$(echo $API_DATA | jq -r '.serviceUrl') 
+
+          az apim api import \
+              --resource-group mil-d-integration-rg \
+              --service-name mil-d-apim \
+              --api-id mil-d-payment-notice \
+              --specification-format OpenApi \
+              --specification-url https://raw.githubusercontent.com/pagopa/mil-payment-notice/main/src/main/resources/META-INF/openapi.yaml \
+              --path $API_PATH \
+              --service-url $API_SERVICE_URL
+
   deploy_uat:
     name: Deploy UAT
     needs: [deploy_dev]
