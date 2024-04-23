@@ -200,16 +200,16 @@ jobs:
       - name: Update OpenAPI 
         if: steps.semantic.outputs.new_release_published == 'true'
         run: |
-          API_DATA=$(az apim api show --resource-group mil-d-integration-rg --service-name mil-d-apim --api-id mil-d-payment-notice --query "{path:path, serviceUrl:serviceUrl}")
+          API_DATA=$(az apim api show --resource-group mil-d-integration-rg --service-name mil-d-apim --api-id mil-d-terminal-registry --query "{path:path, serviceUrl:serviceUrl}")
           API_PATH=$(echo $API_DATA | jq -r '.path')
           API_SERVICE_URL=$(echo $API_DATA | jq -r '.serviceUrl') 
 
           az apim api import \
               --resource-group mil-d-integration-rg \
               --service-name mil-d-apim \
-              --api-id mil-d-payment-notice \
+              --api-id mil-d-terminal-registry \
               --specification-format OpenApi \
-              --specification-url https://raw.githubusercontent.com/pagopa/mil-payment-notice/main/src/main/resources/META-INF/openapi.yaml \
+              --specification-url https://raw.githubusercontent.com/pagopa/mil-terminal-registry/main/src/main/resources/META-INF/openapi.yaml \
               --path $API_PATH \
               --service-url $API_SERVICE_URL
 
@@ -236,4 +236,20 @@ jobs:
           containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           imageToDeploy: ${{ needs.deploy_dev.outputs.pushedImage }}
+      
+      - name: Update OpenAPI 
+        run: |
+          API_DATA=$(az apim api show --resource-group mil-u-integration-rg --service-name mil-u-apim --api-id mil-u-terminal-registry --query "{path:path, serviceUrl:serviceUrl}")
+          API_PATH=$(echo $API_DATA | jq -r '.path')  
+          API_SERVICE_URL=$(echo $API_DATA | jq -r '.serviceUrl') 
+
+          az apim api import \
+              --resource-group mil-u-integration-rg \
+              --service-name mil-u-apim \
+              --api-id mil-u-terminal-registry \
+              --specification-format OpenApi \
+              --specification-url https://raw.githubusercontent.com/pagopa/mil-terminal-registry/main/src/main/resources/META-INF/openapi.yaml \
+              --path $API_PATH \
+              --service-url $API_SERVICE_URL
+
 
