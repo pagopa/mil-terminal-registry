@@ -12,6 +12,7 @@ import it.pagopa.swclient.mil.controller.model.TerminalDto;
 import it.pagopa.swclient.mil.dao.TerminalEntity;
 import it.pagopa.swclient.mil.dao.TerminalRepository;
 import it.pagopa.swclient.mil.util.TerminalTestData;
+import jakarta.ws.rs.WebApplicationException;
 import org.bson.BsonDocument;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -46,7 +47,6 @@ class TerminalServiceTest {
 
     @Test
     void testCreateTerminal_Success() {
-
         Mockito.when(terminalRepository.persist(any(TerminalEntity.class)))
                 .thenReturn(Uni.createFrom().item(terminalEntity));
 
@@ -73,25 +73,15 @@ class TerminalServiceTest {
 
     @Test
     void whenGetTerminalListThenSuccess() {
-        TerminalEntity terminalEntity1 = new TerminalEntity();
-        TerminalEntity terminalEntity2 = new TerminalEntity();
-        terminalEntity1.terminalUuid = "uuid1";
-        terminalEntity1.serviceProviderId = "serviceProviderId";
-        terminalEntity2.terminalUuid = "uuid2";
-        terminalEntity2.serviceProviderId = "serviceProviderId";
-        List<TerminalEntity> terminalEntities= List.of(terminalEntity1,terminalEntity2);
-
         ReactivePanacheQuery<TerminalEntity> query = Mockito.mock(ReactivePanacheQuery.class);
         Mockito.when(query.page(anyInt(), anyInt())).thenReturn(query);
-        Mockito.when(query.list()).thenReturn(Uni.createFrom().item(terminalEntities));
+        Mockito.when(query.list()).thenReturn(Uni.createFrom().item(mockedList()));
         Mockito.when(terminalRepository.find("serviceProviderId", "serviceProviderId")).thenReturn(query);
 
-        var terminalList = terminalService.getTerminalListPaged("serviceProviderId", 0, 10);
-        terminalList
-                .subscribe()
-                .withSubscriber(UniAssertSubscriber.create())
-                .assertItem(terminalEntities);
+        Uni<List<TerminalEntity>> result = terminalService.getTerminalListPaged("serviceProviderId", 0, 10);
 
+        result.subscribe()
+                .with(list -> Assertions.assertEquals(mockedList(), list));
     }
 
     @Test
@@ -106,6 +96,52 @@ class TerminalServiceTest {
                 .withSubscriber(UniAssertSubscriber.create())
                 .assertItem(10L);
     }
+  
+    @Test
+    void testFindTerminal_Success() {
+        ReactivePanacheQuery<TerminalEntity> query = Mockito.mock(ReactivePanacheQuery.class);
+        Mockito.when(query.firstResult()).thenReturn(Uni.createFrom().item(terminalEntity));
+        Mockito.when(terminalRepository.find("serviceProviderId = ?1 and terminalUuid = ?2", "serviceProviderId", "terminalUuid")).thenReturn(query);
+
+        Uni<TerminalEntity> terminalEntityUni = terminalService.findTerminal("serviceProviderId", "terminalUuid");
+
+        terminalEntityUni
+                .subscribe()
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertItem(terminalEntity);
+    }
+
+    @Test
+    void testUpdateTerminal_Success() {
+        Mockito.when(terminalRepository.update(any(TerminalEntity.class)))
+                .thenReturn(Uni.createFrom().item(terminalEntity));
+
+        Uni<TerminalEntity> result = terminalService.updateTerminal("terminalUuid", "serviceProviderId", terminalDto, terminalEntity);
+
+        result.subscribe()
+                .with(entity -> Assertions.assertEquals(terminalEntity, entity));
+    }
+
+    @Test
+    void testUpdateTerminal_Failure() {
+        Mockito.when(terminalRepository.update(any(TerminalEntity.class)))
+                .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
+
+        Uni<TerminalEntity> result = terminalService.updateTerminal("terminalUuid", "serviceProviderId", terminalDto, terminalEntity);
+
+        result.subscribe()
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertFailedWith(WebApplicationException.class);
+    }
 
 
+
+    private List<TerminalEntity> mockedList() {
+        TerminalEntity te1 = new TerminalEntity();
+        te1.setTerminalUuid("uuid1");
+        TerminalEntity te2 = new TerminalEntity();
+        te2.setTerminalUuid("uuid2");
+
+        return List.of(te1, te2);
+    }
 }

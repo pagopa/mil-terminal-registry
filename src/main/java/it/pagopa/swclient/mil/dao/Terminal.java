@@ -3,15 +3,14 @@ package it.pagopa.swclient.mil.dao;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.quarkus.runtime.annotations.RegisterForReflection;
 import it.pagopa.swclient.mil.controller.model.PagoPaConf;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@Builder
+import java.util.List;
+
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@ToString
 @RegisterForReflection
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Terminal {
@@ -19,6 +18,7 @@ public class Terminal {
     private Boolean enabled;
     private String payeeCode;
     private Boolean slave;
+    private List<String> workstations;
     private Boolean pagoPa;
     private PagoPaConf pagoPaConf;
     private Boolean idpay;
