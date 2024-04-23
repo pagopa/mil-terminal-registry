@@ -78,12 +78,10 @@ class TerminalServiceTest {
         Mockito.when(query.list()).thenReturn(Uni.createFrom().item(mockedList()));
         Mockito.when(terminalRepository.find("serviceProviderId", "serviceProviderId")).thenReturn(query);
 
-        var terminalList = terminalService.getTerminalListPaged("serviceProviderId", 0, 10);
+        Uni<List<TerminalEntity>> result = terminalService.getTerminalListPaged("serviceProviderId", 0, 10);
 
-        terminalList
-                .subscribe()
-                .withSubscriber(UniAssertSubscriber.create())
-                .assertItem(mockedList());
+        result.subscribe()
+                .with(list -> Assertions.assertEquals(mockedList(), list));
     }
 
     @Test
