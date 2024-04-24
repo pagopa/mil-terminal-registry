@@ -12,8 +12,8 @@ repositories {
 
 dependencies {
     implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-resteasy-reactive'
+    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
     implementation 'io.quarkus:quarkus-arc'
     implementation "org.projectlombok:lombok:${lombokVersion}"
     implementation 'io.quarkus:quarkus-hibernate-validator'
@@ -21,9 +21,9 @@ dependencies {
     implementation 'io.quarkus:quarkus-mongodb-panache'
     implementation 'org.eclipse.microprofile.jwt:microprofile-jwt-auth-api'
     implementation 'io.quarkus:quarkus-smallrye-jwt'
-    implementation 'io.quarkus:quarkus-test-security'
-    implementation 'io.quarkus:quarkus-test-security-jwt'
-
+    
+    testImplementation 'io.quarkus:quarkus-test-security'
+    testImplementation 'io.quarkus:quarkus-test-security-jwt'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
     testImplementation "io.quarkus:quarkus-jacoco"
@@ -57,7 +57,6 @@ compileTestJava {
 jacoco {
     toolVersion = "${jacocoToolVersion}"
 }
-
 
 def jacocoQuarkusPath = project.layout.buildDirectory.file("jacoco-quarkus.exec")
 

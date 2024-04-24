@@ -64,24 +64,60 @@ public class TerminalService {
                 .count("serviceProviderId", serviceProviderId);
     }
 
+
+    /**
+     * Find first terminal equals to serviceProviderId and terminalUuid given in input.
+     *
+     * @param serviceProviderId service provider id
+     * @param terminalUuid      uuid of terminal
+     * @return terminal founded
+     */
+    public Uni<TerminalEntity> findTerminal(String serviceProviderId, String terminalUuid) {
+
+        return terminalRepository
+                .find("serviceProviderId = ?1 and terminalUuid = ?2", serviceProviderId, terminalUuid)
+                .firstResult();
+    }
+
+    /**
+     * Update terminal starting from a terminalDto.
+     *
+     * @param terminalDto       dto of modified terminal
+     * @param terminalUuid      terminalUuid of old terminal to be modified
+     * @param serviceProviderId service provider id
+     * @return terminal updated
+     */
+    public Uni<TerminalEntity> updateTerminal(String terminalUuid, String serviceProviderId, TerminalDto terminalDto, TerminalEntity oldTerminal) {
+
+        TerminalEntity entity = createTerminalEntity(terminalDto, serviceProviderId, terminalUuid);
+        entity.id = oldTerminal.id;
+
+        return terminalRepository.update(entity)
+                .onFailure()
+                .transform(error -> error)
+                .onItem()
+                .transform(terminalUpdated -> terminalUpdated);
+    }
+
     private TerminalEntity createTerminalEntity(TerminalDto terminalDto, String serviceProviderId, String terminalUuid) {
         Log.debugf("TerminalService -> createTerminalEntity: storing terminal [%s] on DB", terminalDto);
 
-        Terminal terminal = Terminal.builder()
-                .terminalId(terminalDto.terminalId())
-                .enabled(terminalDto.enabled())
-                .payeeCode(terminalDto.payeeCode())
-                .slave(terminalDto.slave())
-                .pagoPaConf(terminalDto.pagoPaConf())
-                .idpay(terminalDto.idpay())
-                .build();
+        Terminal terminal = new Terminal();
+        terminal.setTerminalId(terminalDto.terminalId());
+        terminal.setEnabled(terminalDto.enabled());
+        terminal.setPayeeCode(terminalDto.payeeCode());
+        terminal.setSlave(terminalDto.slave());
+        terminal.setPagoPaConf(terminalDto.pagoPaConf());
+        terminal.setIdpay(terminalDto.idpay());
+        terminal.setWorkstations(terminalDto.workstations());
 
-        return TerminalEntity.builder()
-                .terminalUuid(terminalUuid)
-                .terminalHandler(terminalDto.terminalHandlerId())
-                .serviceProviderId(serviceProviderId)
-                .terminal(terminal)
-                .build();
+        TerminalEntity terminalEntity = new TerminalEntity();
+        terminalEntity.setTerminalUuid(terminalUuid);
+        terminalEntity.setTerminalHandler(terminalDto.terminalHandlerId());
+        terminalEntity.setServiceProviderId(serviceProviderId);
+        terminalEntity.setTerminal(terminal);
+
+        return terminalEntity;
     }
 
     /**

@@ -118,29 +118,29 @@ jobs:
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC@${{ steps.docker_build_push_candidate.outputs.digest }}
 
-#      #
-#      # Install Node.
-#      #
-#      - name: Install Node
-#        if: steps.semantic.outputs.new_release_published == 'true'
-#        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
-#        with:
-#          node-version: "18.16.0"
-#
-#      #
-#      # Install Newman.
-#      #
-#      - name: Install Newman
-#        if: steps.semantic.outputs.new_release_published == 'true'
-#        run: npm install -g newman
+      #
+      # Install Node.
+      #
+      - name: Install Node
+        if: steps.semantic.outputs.new_release_published == 'true'
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+        with:
+          node-version: "18.16.0"
+
+      #
+      # Install Newman.
+      #
+      - name: Install Newman
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: npm install -g newman
 
       #
       # Run Postman collection.
       #
-#      - name: Run Postman collection
-#        if: steps.semantic.outputs.new_release_published == 'true'
-#        run: newman run src/test/postman/mil-auth.postman_collection.json -e src/test/postman/dev.postman_environment.json
-
+      - name: Run Postman collection
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: newman run src/test/postman/mil-terminal-registry.postman_collection.json -e src/test/postman/dev.postman_environment.json
+       
       #
       # STABLE - Update of gradle.properties with the new version.
       #
@@ -197,6 +197,22 @@ jobs:
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}@${{ steps.docker_build_push_stable.outputs.digest }}
 
+      - name: Update OpenAPI 
+        if: steps.semantic.outputs.new_release_published == 'true'
+        run: |
+          API_DATA=$(az apim api show --resource-group mil-d-integration-rg --service-name mil-d-apim --api-id mil-d-terminal-registry --query "{path:path, serviceUrl:serviceUrl}")
+          API_PATH=$(echo $API_DATA | jq -r '.path')
+          API_SERVICE_URL=$(echo $API_DATA | jq -r '.serviceUrl') 
+
+          az apim api import \
+              --resource-group mil-d-integration-rg \
+              --service-name mil-d-apim \
+              --api-id mil-d-terminal-registry \
+              --specification-format OpenApi \
+              --specification-url https://raw.githubusercontent.com/pagopa/mil-terminal-registry/main/src/main/resources/META-INF/openapi.yaml \
+              --path $API_PATH \
+              --service-url $API_SERVICE_URL
+
   deploy_uat:
     name: Deploy UAT
     needs: [deploy_dev]
@@ -220,4 +236,20 @@ jobs:
           containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           imageToDeploy: ${{ needs.deploy_dev.outputs.pushedImage }}
+      
+      - name: Update OpenAPI 
+        run: |
+          API_DATA=$(az apim api show --resource-group mil-u-integration-rg --service-name mil-u-apim --api-id mil-u-terminal-registry --query "{path:path, serviceUrl:serviceUrl}")
+          API_PATH=$(echo $API_DATA | jq -r '.path')  
+          API_SERVICE_URL=$(echo $API_DATA | jq -r '.serviceUrl') 
+
+          az apim api import \
+              --resource-group mil-u-integration-rg \
+              --service-name mil-u-apim \
+              --api-id mil-u-terminal-registry \
+              --specification-format OpenApi \
+              --specification-url https://raw.githubusercontent.com/pagopa/mil-terminal-registry/main/src/main/resources/META-INF/openapi.yaml \
+              --path $API_PATH \
+              --service-url $API_SERVICE_URL
+
 

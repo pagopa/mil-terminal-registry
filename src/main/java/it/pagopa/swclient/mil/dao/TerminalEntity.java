@@ -1,14 +1,14 @@
 package it.pagopa.swclient.mil.dao;
 
+import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
 
-@ToString
-@Data
-@Builder
 @Getter
+@Setter
 @MongoEntity(database = "mil", collection = "terminalRegistry")
-public class TerminalEntity {
+public class TerminalEntity extends PanacheMongoEntity {
 
     private String terminalUuid;
 

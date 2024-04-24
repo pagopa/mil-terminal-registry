@@ -1,0 +1,299 @@
+{
+	"info": {
+		"_postman_id": "7ed6e99e-50de-4fe1-a17f-f582d6545160",
+		"name": "Terminal Registry Microservice Copy",
+		"description": "Terminal Registry Microservice for Multi-channel Integration Layer of SW Client Project\n\nContact Support:\n Name: Antonio Tarricone\n Email: antonio.tarricone@pagopa.it",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26204659"
+	},
+	"item": [
+		{
+			"name": "Get Terminal Registry Access Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Body matches string\", function () {\r",
+							"    pm.expect(pm.response.text()).to.include(\"access_token\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"token_type\");\r",
+							"    pm.expect(pm.response.text()).to.include(\"expires_in\");\r",
+							"\r",
+							"    pm.test(\"Token type\", function () {\r",
+							"        var jsonData = pm.response.json();\r",
+							"        pm.expect(jsonData.token_type).to.eql(\"Bearer\");\r",
+							"         pm.environment.set(\"access_token_tr\", jsonData.access_token);\r",
+							"\r",
+							"    });\r",
+							"\r",
+							"   \r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "RequestId",
+						"value": "{{requestId}}",
+						"type": "text"
+					},
+					{
+						"key": "Version",
+						"value": "{{mil_auth_api_version}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{tr_token_client_id}}",
+							"type": "text"	
+						},
+						{
+							"key": "client_secret",
+							"value": "{{tr_token_client_secret}}",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{MIL_AUTH_BASE_URL}}/token",
+					"host": [
+						"{{MIL_AUTH_BASE_URL}}"
+					],
+					"path": [
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create New Terminal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {",
+							"    pm.response.to.have.status(201);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"description": "(Required) Request Id that will be logged by services",
+						"key": "RequestId",
+						"value": "{{requestId}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"terminalHandlerId\": \"{{terminalHandlerId}}\",\n  \"terminalId\": \"{{terminalId}}\",\n  \"enabled\": \"{{enabled}}\",\n  \"payeeCode\": \"{{payeeCode}}\",\n  \"slave\": \"{{slave}}\",\n  \"pagoPa\": \"{{pagoPa}}\",\n  \"idpay\": \"{{idpay}}\",\n  \"pagoPaConf\": {\n    \"pspId\": \"{{pspId}}\",\n    \"brokerId\": \"{{brokerId}}\",\n    \"channelId\": \"{{channelId}}\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{MIL_TR_BASE_URL}}/terminals",
+					"host": [
+						"{{MIL_TR_BASE_URL}}"
+					],
+					"path": [
+						"terminals"
+					]
+				},
+				"description": "Creates a new terminal"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Terminal List",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"description": "(Required) Request Id that will be logged by services",
+						"key": "RequestId",
+						"value": "{{requestId}}"
+					}
+				],
+				"url": {
+					"raw": "{{MIL_TR_BASE_URL}}/terminals?page={{getTerminalPage}}&size={{getTerminalPageSize}}",
+					"host": [
+						"{{MIL_TR_BASE_URL}}"
+					],
+					"path": [
+						"terminals"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "{{getTerminalPage}}",
+							"description": "(Required) Number of the requested page of data"
+						},
+						{
+							"key": "size",
+							"value": "{{getTerminalPageSize}}",
+							"description": "(Required) Size of the requested page of data"
+						}
+					]
+				},
+				"description": "Returns a page of terminals"
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{access_token_tr}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "terminalHandlerId",
+			"value": "45856",
+			"type": "string"
+		},
+		{
+			"key": "terminalId",
+			"value": "34523860",
+			"type": "string"
+		},
+		{
+			"key": "enabled",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "payeeCode",
+			"value": "06534340721",
+			"type": "string"
+		},
+		{
+			"key": "slave",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "pagoPa",
+			"value": "false",
+			"type": "string"
+		},
+		{
+			"key": "idpay",
+			"value": "true",
+			"type": "string"
+		},
+		{
+			"key": "pspId",
+			"value": "AGID_01",
+			"type": "string"
+		},
+		{
+			"key": "brokerId",
+			"value": "97735020584",
+			"type": "string"
+		},
+		{
+			"key": "channelId",
+			"value": "97735020584_03",
+			"type": "string"
+		},
+		{
+			"key": "mil_auth_api_version",
+			"value": "1.0.0"
+		},
+		{
+			"key": "getTerminalPage",
+			"value": "0"
+		},
+		{
+			"key": "getTerminalPageSize",
+			"value": "10"
+		},
+		{
+			"key": "requestId",
+			"value": "d0d654e6-97da-4848-b568-99fedccb642b"
+		}
+	]
+}
