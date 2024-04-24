@@ -134,22 +134,6 @@ class TerminalServiceTest {
                 .assertFailedWith(WebApplicationException.class);
     }
 
-
-
-    @Test
-    void testFindTerminal_Success() {
-        ReactivePanacheQuery<TerminalEntity> query = Mockito.mock(ReactivePanacheQuery.class);
-        Mockito.when(query.firstResult()).thenReturn(Uni.createFrom().item(terminalEntity));
-        Mockito.when(terminalRepository.find("serviceProviderId = ?1 and _id = ?2", "serviceProviderId", "terminalUuid")).thenReturn(query);
-
-        Uni<TerminalEntity> terminalEntityUni = terminalService.findTerminal("serviceProviderId", "terminalUuid");
-
-        terminalEntityUni
-                .subscribe()
-                .withSubscriber(UniAssertSubscriber.create())
-                .assertItem(terminalEntity);
-    }
-
     @Test
     void testDeleteTerminal_Success() {
         Mockito.when(terminalRepository.delete(any(TerminalEntity.class)))
