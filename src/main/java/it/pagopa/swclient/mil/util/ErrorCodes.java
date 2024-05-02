@@ -60,7 +60,7 @@ public final class ErrorCodes {
     private static final String ERROR_GENERIC_FROM_DB_DESCR = "unexpected error from db";
     private static final String ERROR_COUNTING_TERMINALS_DESCR = "error occurred while counting terminal";
     private static final String ERROR_LIST_TERMINALS_DESCR = "error occurred while retrieving list of paginated terminals";
-    private static final String ERROR_TERMINAL_NOT_FOUND_DESCR = "terminal not founded on db";
+    private static final String ERROR_TERMINAL_NOT_FOUND_DESCR = "terminal not found on db";
 
 
 
