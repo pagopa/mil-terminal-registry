@@ -119,4 +119,19 @@ public class TerminalService {
 
         return terminalEntity;
     }
+
+    /**
+     * Update terminal starting from a terminalDto.
+     *
+     * @param terminal      terminal to be deleted
+     * @return void
+     */
+    public Uni<Void> deleteTerminal(TerminalEntity terminal) {
+
+        return terminalRepository.delete(terminal)
+                .onFailure()
+                .transform(error -> error)
+                .onItem()
+                .transform(terminalDeleted -> terminalDeleted);
+    }
 }

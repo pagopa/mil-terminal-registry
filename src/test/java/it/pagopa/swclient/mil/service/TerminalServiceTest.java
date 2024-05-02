@@ -134,7 +134,28 @@ class TerminalServiceTest {
                 .assertFailedWith(WebApplicationException.class);
     }
 
+    @Test
+    void testDeleteTerminal_Success() {
+        Mockito.when(terminalRepository.delete(any(TerminalEntity.class)))
+                .thenReturn(Uni.createFrom().voidItem());
 
+        Uni<Void> result = terminalService.deleteTerminal(terminalEntity);
+
+        result.subscribe()
+                .with(Assertions::assertNull);
+    }
+
+    @Test
+    void testDeleteTerminal_Failure() {
+        Mockito.when(terminalRepository.delete(any(TerminalEntity.class)))
+                .thenReturn(Uni.createFrom().failure(new WebApplicationException()));
+
+        Uni<Void> result = terminalService.deleteTerminal(terminalEntity);
+
+        result.subscribe()
+                .withSubscriber(UniAssertSubscriber.create())
+                .assertFailedWith(WebApplicationException.class);
+    }
 
     private List<TerminalEntity> mockedList() {
         TerminalEntity te1 = new TerminalEntity();
