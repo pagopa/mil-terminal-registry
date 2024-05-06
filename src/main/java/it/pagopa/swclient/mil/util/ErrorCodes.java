@@ -9,7 +9,6 @@ public final class ErrorCodes {
 
     public static final String MODULE_ID = "00TR";
 
-
     /*
      * Validation errors code from 000001 to 000199
      */
@@ -27,7 +26,6 @@ public final class ErrorCodes {
     public static final String ERROR_IDPAY_MUST_NOT_BE_NULL                                      = MODULE_ID + "000012";
     public static final String ERROR_TERMINALDTO_MUST_NOT_BE_NULL                                = MODULE_ID + "000013";
 
-
     /*
      * Service errors code from 000200 to 000500
      */
@@ -36,8 +34,6 @@ public final class ErrorCodes {
     public static final String ERROR_COUNTING_TERMINALS                                          = MODULE_ID + "000202";
     public static final String ERROR_LIST_TERMINALS                                              = MODULE_ID + "000203";
     public static final String ERROR_TERMINAL_NOT_FOUND                                          = MODULE_ID + "000204";
-
-
 
     /*
      * Error descriptions
@@ -61,8 +57,6 @@ public final class ErrorCodes {
     private static final String ERROR_COUNTING_TERMINALS_DESCR = "error occurred while counting terminal";
     private static final String ERROR_LIST_TERMINALS_DESCR = "error occurred while retrieving list of paginated terminals";
     private static final String ERROR_TERMINAL_NOT_FOUND_DESCR = "terminal not found on db";
-
-
 
     /*
      * Error complete message

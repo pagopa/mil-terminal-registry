@@ -20,7 +20,6 @@ public class TerminalService {
         this.terminalRepository = terminalRepository;
     }
 
-
     /**
      * Create a new terminal starting from a terminalDto.
      *
@@ -63,7 +62,6 @@ public class TerminalService {
         return terminalRepository
                 .count("serviceProviderId", serviceProviderId);
     }
-
 
     /**
      * Find first terminal equals to serviceProviderId and terminalUuid given in input.
