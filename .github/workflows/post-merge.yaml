@@ -196,7 +196,6 @@ jobs:
           resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
           imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}@${{ steps.docker_build_push_stable.outputs.digest }}
 
-
       - name: Login to Azure for OpenAPI Update
         uses: azure/login@8c334a195cbb38e46038007b304988d888bf676a #v2.0.0
         with:
