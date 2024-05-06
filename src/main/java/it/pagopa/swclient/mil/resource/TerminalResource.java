@@ -35,7 +35,7 @@ public class TerminalResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"pos_service_provider"})
+    @RolesAllowed({ "pos_service_provider" })
     public Uni<Response> createTerminal(
             @HeaderParam("RequestId") @NotNull(message = ErrorCodes.ERROR_REQUESTID_MUST_NOT_BE_NULL_MSG) @Pattern(regexp = RegexPatterns.REQUEST_ID_PATTERN) String requestId,
             @Valid @NotNull(message = ErrorCodes.ERROR_TERMINALDTO_MUST_NOT_BE_NULL_MSG) TerminalDto terminal) {
@@ -47,26 +47,34 @@ public class TerminalResource {
         return terminalService.createTerminal(serviceProviderId, terminal)
                 .onFailure()
                 .transform(err -> {
-                    if (err instanceof MongoWriteException mongoWriteException && (mongoWriteException.getCode() == 11000)) {
-                        Log.errorf(err, "TerminalResource -> createTerminal: duplicate key violation for terminalId [%s] and terminalHandlerId [%s]", terminal.terminalId(), terminal.terminalHandlerId());
+                    if (err instanceof MongoWriteException mongoWriteException
+                            && (mongoWriteException.getCode() == 11000)) {
+                        Log.errorf(err,
+                                "TerminalResource -> createTerminal: duplicate key violation for terminalId [%s] and terminalHandlerId [%s]",
+                                terminal.terminalId(), terminal.terminalHandlerId());
 
                         return new WebApplicationException(Response
                                 .status(Response.Status.CONFLICT)
-                                .entity(new Errors(ErrorCodes.ERROR_DUPLICATE_KEY_FROM_DB, ErrorCodes.ERROR_DUPLICATE_KEY_FROM_DB_MSG))
+                                .entity(new Errors(ErrorCodes.ERROR_DUPLICATE_KEY_FROM_DB,
+                                        ErrorCodes.ERROR_DUPLICATE_KEY_FROM_DB_MSG))
                                 .build());
 
                     } else {
-                        Log.errorf(err, "TerminalResource -> createTerminal: unexpected error during persist for terminal [%s]", terminal);
+                        Log.errorf(err,
+                                "TerminalResource -> createTerminal: unexpected error during persist for terminal [%s]",
+                                terminal);
 
                         return new InternalServerErrorException(Response
                                 .status(Response.Status.INTERNAL_SERVER_ERROR)
-                                .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB, ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
+                                .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB,
+                                        ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
                                 .build());
                     }
                 })
                 .onItem()
                 .transform(terminalSaved -> {
-                    Log.debugf("TerminalResource -> createTerminal: terminal saved correctly on DB [%s]", terminalSaved);
+                    Log.debugf("TerminalResource -> createTerminal: terminal saved correctly on DB [%s]",
+                            terminalSaved);
 
                     return Response.status(Response.Status.CREATED).build();
                 });
@@ -76,43 +84,53 @@ public class TerminalResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"pos_service_provider"})
+    @RolesAllowed({ "pos_service_provider" })
     public Uni<Response> getTerminals(
             @HeaderParam("RequestId") @NotNull(message = ErrorCodes.ERROR_REQUESTID_MUST_NOT_BE_NULL_MSG) @Pattern(regexp = RegexPatterns.REQUEST_ID_PATTERN) String requestId,
             @QueryParam("page") int pageNumber,
             @QueryParam("size") int pageSize) {
 
-        Log.debugf("TerminalResource -> getTerminals - Input requestId, pageNumber, size: %s, %s, %s", requestId, pageNumber, pageSize);
+        Log.debugf("TerminalResource -> getTerminals - Input requestId, pageNumber, size: %s, %s, %s", requestId,
+                pageNumber, pageSize);
 
         String serviceProviderId = jwt.getSubject();
 
         return terminalService.getTerminalCount(serviceProviderId)
                 .onFailure()
                 .transform(err -> {
-                    Log.errorf(err, "TerminalResource -> getTerminals: error while counting terminals for serviceProviderId [%s]", serviceProviderId);
+                    Log.errorf(err,
+                            "TerminalResource -> getTerminals: error while counting terminals for serviceProviderId [%s]",
+                            serviceProviderId);
 
                     return new InternalServerErrorException(Response
                             .status(Response.Status.INTERNAL_SERVER_ERROR)
-                            .entity(new Errors(ErrorCodes.ERROR_COUNTING_TERMINALS, ErrorCodes.ERROR_COUNTING_TERMINALS_MSG))
+                            .entity(new Errors(ErrorCodes.ERROR_COUNTING_TERMINALS,
+                                    ErrorCodes.ERROR_COUNTING_TERMINALS_MSG))
                             .build());
                 })
                 .onItem()
                 .transformToUni(numberOfTerminals -> {
-                    Log.debugf("TerminalResource -> getTerminals: founded a total count of [%s] terminals", numberOfTerminals);
+                    Log.debugf("TerminalResource -> getTerminals: founded a total count of [%s] terminals",
+                            numberOfTerminals);
 
                     return terminalService.getTerminalListPaged(serviceProviderId, pageNumber, pageSize)
                             .onFailure()
                             .transform(err -> {
-                                Log.errorf(err, "TerminalResource -> getTerminals: Error while retrieving list of terminals for serviceProviderId, index and size [%s, %s, %s]", serviceProviderId, pageNumber, pageSize);
+                                Log.errorf(err,
+                                        "TerminalResource -> getTerminals: Error while retrieving list of terminals for serviceProviderId, index and size [%s, %s, %s]",
+                                        serviceProviderId, pageNumber, pageSize);
 
                                 return new InternalServerErrorException(Response
                                         .status(Response.Status.INTERNAL_SERVER_ERROR)
-                                        .entity(new Errors(ErrorCodes.ERROR_LIST_TERMINALS, ErrorCodes.ERROR_LIST_TERMINALS_MSG))
+                                        .entity(new Errors(ErrorCodes.ERROR_LIST_TERMINALS,
+                                                ErrorCodes.ERROR_LIST_TERMINALS_MSG))
                                         .build());
                             })
                             .onItem()
                             .transform(terminalsPaged -> {
-                                Log.debugf("TerminalResource -> getTerminals: size of list of terminals paginated founded: [%s]", terminalsPaged.size());
+                                Log.debugf(
+                                        "TerminalResource -> getTerminals: size of list of terminals paginated founded: [%s]",
+                                        terminalsPaged.size());
 
                                 int totalPages = (int) Math.ceil((double) numberOfTerminals / pageSize);
                                 PageMetadata pageMetadata = new PageMetadata(pageSize, numberOfTerminals, totalPages);
@@ -129,7 +147,7 @@ public class TerminalResource {
     @Path("/{terminalUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"pos_service_provider"})
+    @RolesAllowed({ "pos_service_provider" })
     public Uni<Response> updateTerminal(
             @HeaderParam("RequestId") @NotNull(message = ErrorCodes.ERROR_REQUESTID_MUST_NOT_BE_NULL_MSG) @Pattern(regexp = RegexPatterns.REQUEST_ID_PATTERN) String requestId,
             @Valid @NotNull(message = ErrorCodes.ERROR_TERMINALDTO_MUST_NOT_BE_NULL_MSG) TerminalDto terminal,
@@ -142,7 +160,9 @@ public class TerminalResource {
         return terminalService.findTerminal(serviceProviderId, terminalUuid)
                 .onFailure()
                 .transform(err -> {
-                    Log.errorf(err, "TerminalResource -> updateTerminal: error during search terminal with terminalUuid, serviceProviderId: [%s, %s]", terminalUuid, serviceProviderId);
+                    Log.errorf(err,
+                            "TerminalResource -> updateTerminal: error during search terminal with terminalUuid, serviceProviderId: [%s, %s]",
+                            terminalUuid, serviceProviderId);
 
                     return new InternalServerErrorException(Response
                             .status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -152,27 +172,33 @@ public class TerminalResource {
                 .onItem()
                 .transformToUni(terminalEntity -> {
                     if (terminalEntity == null) {
-                        Log.errorf("TerminalResource -> updateTerminal: error 404 during searching terminal with terminalUuid, serviceProviderId: [%s, %s]", terminalUuid, serviceProviderId);
+                        Log.errorf(
+                                "TerminalResource -> updateTerminal: error 404 during searching terminal with terminalUuid, serviceProviderId: [%s, %s]",
+                                terminalUuid, serviceProviderId);
 
                         return Uni.createFrom().failure(new NotFoundException(Response
                                 .status(Response.Status.NOT_FOUND)
-                                .entity(new Errors(ErrorCodes.ERROR_TERMINAL_NOT_FOUND, ErrorCodes.ERROR_TERMINAL_NOT_FOUND_MSG))
+                                .entity(new Errors(ErrorCodes.ERROR_TERMINAL_NOT_FOUND,
+                                        ErrorCodes.ERROR_TERMINAL_NOT_FOUND_MSG))
                                 .build()));
                     }
 
                     return terminalService.updateTerminal(terminalUuid, serviceProviderId, terminal, terminalEntity)
                             .onFailure()
                             .transform(err -> {
-                                Log.errorf(err, "TerminalResource -> updateTerminal: error during update terminal [%s]", terminal);
+                                Log.errorf(err, "TerminalResource -> updateTerminal: error during update terminal [%s]",
+                                        terminal);
 
                                 return new InternalServerErrorException(Response
                                         .status(Response.Status.INTERNAL_SERVER_ERROR)
-                                        .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB, ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
+                                        .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB,
+                                                ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
                                         .build());
                             })
                             .onItem()
                             .transform(terminalUpdated -> {
-                                Log.debugf("TerminalResource -> updateTerminal: terminal updated correctly on DB [%s]", terminalUpdated);
+                                Log.debugf("TerminalResource -> updateTerminal: terminal updated correctly on DB [%s]",
+                                        terminalUpdated);
 
                                 return Response
                                         .status(Response.Status.NO_CONTENT)
@@ -185,19 +211,22 @@ public class TerminalResource {
     @Path("/{terminalUuid}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed({"pos_service_provider"})
+    @RolesAllowed({ "pos_service_provider" })
     public Uni<Response> deleteTerminal(
             @HeaderParam("RequestId") @NotNull(message = ErrorCodes.ERROR_REQUESTID_MUST_NOT_BE_NULL_MSG) @Pattern(regexp = RegexPatterns.REQUEST_ID_PATTERN) String requestId,
             @PathParam(value = "terminalUuid") String terminalUuid) {
 
-        Log.debugf("TerminalResource -> deleteTerminal - Input requestId, terminalUuid: %s, %s", requestId, terminalUuid);
+        Log.debugf("TerminalResource -> deleteTerminal - Input requestId, terminalUuid: %s, %s", requestId,
+                terminalUuid);
 
         String serviceProviderId = jwt.getSubject();
 
         return terminalService.findTerminal(serviceProviderId, terminalUuid)
                 .onFailure()
                 .transform(err -> {
-                    Log.errorf(err, "TerminalResource -> deleteTerminal: error during search terminal with terminalUuid, serviceProviderId: [%s, %s]", terminalUuid, serviceProviderId);
+                    Log.errorf(err,
+                            "TerminalResource -> deleteTerminal: error during search terminal with terminalUuid, serviceProviderId: [%s, %s]",
+                            terminalUuid, serviceProviderId);
 
                     return new InternalServerErrorException(Response
                             .status(Response.Status.INTERNAL_SERVER_ERROR)
@@ -207,27 +236,34 @@ public class TerminalResource {
                 .onItem()
                 .transformToUni(terminalEntity -> {
                     if (terminalEntity == null) {
-                        Log.errorf("TerminalResource -> deleteTerminal: error 404 during searching terminal with terminalUuid, serviceProviderId: [%s, %s]", terminalUuid, serviceProviderId);
+                        Log.errorf(
+                                "TerminalResource -> deleteTerminal: error 404 during searching terminal with terminalUuid, serviceProviderId: [%s, %s]",
+                                terminalUuid, serviceProviderId);
 
                         return Uni.createFrom().failure(new NotFoundException(Response
                                 .status(Response.Status.NOT_FOUND)
-                                .entity(new Errors(ErrorCodes.ERROR_TERMINAL_NOT_FOUND, ErrorCodes.ERROR_TERMINAL_NOT_FOUND_MSG))
+                                .entity(new Errors(ErrorCodes.ERROR_TERMINAL_NOT_FOUND,
+                                        ErrorCodes.ERROR_TERMINAL_NOT_FOUND_MSG))
                                 .build()));
                     }
 
                     return terminalService.deleteTerminal(terminalEntity)
                             .onFailure()
                             .transform(err -> {
-                                Log.errorf(err, "TerminalResource -> deleteTerminal: error during deleting terminal [%s]", terminalEntity);
+                                Log.errorf(err,
+                                        "TerminalResource -> deleteTerminal: error during deleting terminal [%s]",
+                                        terminalEntity);
 
                                 return new InternalServerErrorException(Response
                                         .status(Response.Status.INTERNAL_SERVER_ERROR)
-                                        .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB, ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
+                                        .entity(new Errors(ErrorCodes.ERROR_GENERIC_FROM_DB,
+                                                ErrorCodes.ERROR_GENERIC_FROM_DB_MSG))
                                         .build());
                             })
                             .onItem()
                             .transform(terminalUpdated -> {
-                                Log.debugf("TerminalResource -> deleteTerminal: terminal deleted correctly on DB [%s]", terminalUpdated);
+                                Log.debugf("TerminalResource -> deleteTerminal: terminal deleted correctly on DB [%s]",
+                                        terminalUpdated);
 
                                 return Response
                                         .status(Response.Status.NO_CONTENT)
