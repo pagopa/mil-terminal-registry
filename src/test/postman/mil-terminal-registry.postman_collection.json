@@ -1,10 +1,11 @@
 {
 	"info": {
-		"_postman_id": "7ed6e99e-50de-4fe1-a17f-f582d6545160",
+		"_postman_id": "6f68cddc-016b-4d27-ac7e-c6ebc8dd4534",
 		"name": "Terminal Registry Microservice Copy",
 		"description": "Terminal Registry Microservice for Multi-channel Integration Layer of SW Client Project\n\nContact Support:\n Name: Antonio Tarricone\n Email: antonio.tarricone@pagopa.it",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26204659"
+		"_exporter_id": "29646859",
+		"_collection_link": "https://crimson-zodiac-456704.postman.co/workspace/Personal-Workspace~7804a326-503c-4623-9152-3f4c38f2d060/collection/29646859-6f68cddc-016b-4d27-ac7e-c6ebc8dd4534?action=share&source=collection_link&creator=29646859"
 	},
 	"item": [
 		{
@@ -57,13 +58,11 @@
 				"header": [
 					{
 						"key": "RequestId",
-						"value": "{{requestId}}",
-						"type": "text"
+						"value": "{{requestId}}"
 					},
 					{
 						"key": "Version",
-						"value": "{{mil_auth_api_version}}",
-						"type": "text"
+						"value": "{{mil_auth_api_version}}"
 					}
 				],
 				"body": {
@@ -77,7 +76,7 @@
 						{
 							"key": "client_id",
 							"value": "{{tr_token_client_id}}",
-							"type": "text"	
+							"type": "text"
 						},
 						{
 							"key": "client_secret",
@@ -119,9 +118,9 @@
 				"method": "POST",
 				"header": [
 					{
-						"description": "(Required) Request Id that will be logged by services",
 						"key": "RequestId",
-						"value": "{{requestId}}"
+						"value": "{{requestId}}",
+						"description": "(Required) Request Id that will be logged by services"
 					}
 				],
 				"body": {
@@ -153,6 +152,9 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"var jsonData = JSON.parse(pm.response.text());",
+							"pm.collectionVariables.set(\"terminalUuid\", jsonData.terminals[0].terminalUuid);",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
@@ -167,9 +169,9 @@
 				"method": "GET",
 				"header": [
 					{
-						"description": "(Required) Request Id that will be logged by services",
 						"key": "RequestId",
-						"value": "{{requestId}}"
+						"value": "{{requestId}}",
+						"description": "(Required) Request Id that will be logged by services"
 					}
 				],
 				"url": {
@@ -191,6 +193,55 @@
 							"value": "{{getTerminalPageSize}}",
 							"description": "(Required) Size of the requested page of data"
 						}
+					]
+				},
+				"description": "Returns a page of terminals"
+			},
+			"response": []
+		},
+		{
+			"name": "Update Terminal",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {",
+							"    pm.response.to.have.status(204);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "RequestId",
+						"value": "{{requestId}}",
+						"description": "(Required) Request Id that will be logged by services"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"terminalHandlerId\": \"98765\",\r\n    \"terminalId\": \"67899876\",\r\n    \"enabled\": false,\r\n    \"payeeCode\": \"MRNGLG93A01B103A\",\r\n    \"slave\": false,\r\n    \"workstations\": [\"cassa-1-ufficio-1\",\"cassa-2-ufficio-1\"],\r\n    \"pagoPa\": true,\r\n    \"pagoPaConf\": {\r\n        \"pspId\": \"pspspId\",\r\n        \"brokerId\": \"brockId\",\r\n        \"channelId\": \"canalId\"\r\n    },\r\n    \"idpay\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{MIL_TR_BASE_URL}}/terminals/{{terminalUuid}}",
+					"host": [
+						"{{MIL_TR_BASE_URL}}"
+					],
+					"path": [
+						"terminals",
+						"{{terminalUuid}}"
 					]
 				},
 				"description": "Returns a page of terminals"
@@ -294,6 +345,11 @@
 		{
 			"key": "requestId",
 			"value": "d0d654e6-97da-4848-b568-99fedccb642b"
+		},
+		{
+			"key": "terminalUuid",
+			"value": "",
+			"type": "string"
 		}
 	]
 }
