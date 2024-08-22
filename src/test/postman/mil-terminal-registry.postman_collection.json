@@ -132,9 +132,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{MIL_TR_BASE_URL}}/terminals",
+					"raw": "{{MIL_TR_BASE_CSTAR_URL}}/terminals",
 					"host": [
-						"{{MIL_TR_BASE_URL}}"
+						"{{MIL_TR_BASE_CSTAR_URL}}"
 					],
 					"path": [
 						"terminals"
@@ -174,9 +174,9 @@
 					}
 				],
 				"url": {
-					"raw": "{{MIL_TR_BASE_URL}}/terminals?page={{getTerminalPage}}&size={{getTerminalPageSize}}",
+					"raw": "{{MIL_TR_BASE_CSTAR_URL}}/terminals?page={{getTerminalPage}}&size={{getTerminalPageSize}}",
 					"host": [
-						"{{MIL_TR_BASE_URL}}"
+						"{{MIL_TR_BASE_CSTAR_URL}}"
 					],
 					"path": [
 						"terminals"
@@ -234,9 +234,9 @@
 					}
 				},
 				"url": {
-					"raw": "{{MIL_TR_BASE_URL}}/terminals/{{terminalUuid}}",
+					"raw": "{{MIL_TR_BASE_CSTAR_URL}}/terminals/{{terminalUuid}}",
 					"host": [
-						"{{MIL_TR_BASE_URL}}"
+						"{{MIL_TR_BASE_CSTAR_URL}}"
 					],
 					"path": [
 						"terminals",
@@ -274,9 +274,9 @@
 					}
 				],
 				"url": {
-					"raw": "{{MIL_TR_BASE_URL}}/terminals/{{terminalUuid}}",
+					"raw": "{{MIL_TR_BASE_CSTAR_URL}}/terminals/{{terminalUuid}}",
 					"host": [
-						"{{MIL_TR_BASE_URL}}"
+						"{{MIL_TR_BASE_CSTAR_URL}}"
 					],
 					"path": [
 						"terminals",

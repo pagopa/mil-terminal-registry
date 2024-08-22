@@ -71,31 +71,3 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           platforms: ${{ env.TARGET_PLATFORMS }}
 
-
-  deploy:
-    needs: [build_and_push]
-    name: Deploy on ${{ inputs.environment }}
-    runs-on: ubuntu-latest
-    environment: ${{ inputs.environment }}
-
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Login to Azure
-        uses: azure/login@8c334a195cbb38e46038007b304988d888bf676a #v2.0.0
-        with:
-          client-id: ${{ secrets.AZURE_CD_IDENTITY_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_CD_IDENTITY_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Get image tag to deploy
-        id: tagToDeploy
-        run: echo "tag=$(echo ${{ needs.build_and_push.outputs.docker-tags }} | awk '{print $1}')" >> $GITHUB_OUTPUT
-
-      - name: Deploy Container App
-        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
-        with:
-          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
-          imageToDeploy: ${{ steps.tagToDeploy.outputs.tag }}@${{ needs.build_and_push.outputs.image-digest }}

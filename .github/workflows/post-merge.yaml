@@ -52,94 +52,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.BOT_WRITE_PACKAGE_TOKEN }}
 
-      - name: Login to Azure
-        uses: azure/login@8c334a195cbb38e46038007b304988d888bf676a #v2.0.0
-        with:
-          client-id: ${{ secrets.AZURE_CD_IDENTITY_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_CD_IDENTITY_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
       #
-      # Calculate of the new version (dry-run).
+      # Calculation of the new version (again) with tagging + releasing + etc.
       #
-      - name: Calculate of the new version (dry-run)
+      - name: Calculation of the new version (w/o dry_run) and put tag
         uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d
         id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           semantic_version: 19
-          branches: |
-            [ 'main' ]
+          branch: main
           extra_plugins: |
             @semantic-release/release-notes-generator@10.0.3
             @semantic-release/git@10.0.1
-          dry_run: true
-          ci: false
+          dry_run: false
 
-      #
-      # RELEASE CANDIDATE - Update of gradle properties with the new version.
-      #
-      - name: RELEASE CANDIDATE - Update of gradle properties with the new version
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: sed -i -e "s/projectVersion=.*/projectVersion=${{ steps.semantic.outputs.new_release_version }}-RC/g" gradle.properties
-
-      #
-      # RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + SCA with Sonar.
-      #
-      - name:  RELEASE CANDIDATE - Execute unit-test + Calculate test coverage + Sonar
-        if: steps.semantic.outputs.new_release_published == 'true'
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification sonar
-
-      #
-      # RELEASE CANDIDATE - Build native executable.
-      #
-      - name: Build and push Docker Release Candidate image
-        if: steps.semantic.outputs.new_release_published == 'true'
-        id: docker_build_push_candidate
-        uses: docker/build-push-action@0565240e2d4ab88bba5387d719585280857ece09 #v5.0.0
-        with:
-          file: src/main/docker/Dockerfile.native-micro
-          context: .
-          push: true
-          tags: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC
-          labels: |
-            maintainer=https://pagopa.it
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
-          platforms: ${{ env.TARGET_PLATFORMS }}
-
-      - name: RELEASE CANDIDATE - Deploy Container App
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af #v2.0.0
-        with:
-          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
-          imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}-RC@${{ steps.docker_build_push_candidate.outputs.digest }}
-
-      #
-      # Install Node.
-      #
-      - name: Install Node
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
-        with:
-          node-version: "18.16.0"
-
-      #
-      # Install Newman.
-      #
-      - name: Install Newman
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: npm install -g newman
-
-      #
-      # Run Postman collection.
-      #
-      - name: Run Postman collection
-        if: steps.semantic.outputs.new_release_published == 'true'
-        run: newman run src/test/postman/mil-terminal-registry.postman_collection.json -e src/test/postman/dev.postman_environment.json --env-var "tr_token_client_id=${{ secrets.NEWMAN_IT__TR_TOKEN_CLIENT_ID }}" --env-var "tr_token_client_secret=${{ secrets.NEWMAN_IT__TR_TOKEN_CLIENT_SECRET }}"       
       #
       # STABLE - Update of gradle.properties with the new version.
       #
@@ -153,21 +81,15 @@ jobs:
           git commit -m "gradle.properties updated with new version ${{ steps.semantic.outputs.new_release_version }}"
           git push origin main
 
+
       #
-      # Calculation of the new version (again) with tagging + releasing + etc.
+      # Execute unit-test + Calculate test coverage + SCA with Sonar.
       #
-      - name: Calculation of the new version (w/o dry_run) and put tag
+      - name: Execute unit-test + Calculate test coverage + Sonar
         if: steps.semantic.outputs.new_release_published == 'true'
-        uses: cycjimmy/semantic-release-action@8e58d20d0f6c8773181f43eb74d6a05e3099571d
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          semantic_version: 19
-          branch: main
-          extra_plugins: |
-            @semantic-release/release-notes-generator@10.0.3
-            @semantic-release/git@10.0.1
-          dry_run: false
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: ./gradlew clean build jacocoTestReport jacocoTestCoverageVerification sonar
 
       #
       # STABLE - Build native executable.
@@ -188,13 +110,6 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
           platforms: ${{ env.TARGET_PLATFORMS }}
 
-      - name: STABLE - Deploy Container App
-        if: steps.semantic.outputs.new_release_published == 'true'
-        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af # v2.0.0
-        with:
-          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
-          imageToDeploy: ghcr.io/${{ github.repository }}:${{ steps.semantic.outputs.new_release_version }}@${{ steps.docker_build_push_stable.outputs.digest }}
 
       - name: Login to Azure for OpenAPI Update
         uses: azure/login@8c334a195cbb38e46038007b304988d888bf676a #v2.0.0
@@ -218,44 +133,3 @@ jobs:
               --specification-url https://raw.githubusercontent.com/pagopa/mil-terminal-registry/main/src/main/resources/META-INF/openapi.yaml \
               --path $API_PATH \
               --service-url $API_SERVICE_URL
-
-  deploy_uat:
-    name: Deploy UAT
-    needs: [deploy_dev]
-    runs-on: ubuntu-latest
-    environment: uat-cd
-
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Login to Azure
-        uses: azure/login@8c334a195cbb38e46038007b304988d888bf676a #v2.0.0
-        with:
-          client-id: ${{ secrets.AZURE_CD_IDENTITY_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_CD_IDENTITY_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: STABLE - Deploy Container App
-        uses: azure/container-apps-deploy-action@02d045129c058b13312276b50a552834cf74e2af # v2.0.0
-        with:
-          containerAppName: ${{ secrets.AZURE_CONTAINER_APP_NAME }}
-          resourceGroup: ${{ secrets.AZURE_RESOURCE_GROUP_NAME }}
-          imageToDeploy: ${{ needs.deploy_dev.outputs.pushedImage }}
-      
-      - name: Update OpenAPI 
-        run: |
-          API_DATA=$(az apim api show --resource-group mil-u-integration-rg --service-name mil-u-apim --api-id mil-u-terminal-registry --query "{path:path, serviceUrl:serviceUrl}")
-          API_PATH=$(echo $API_DATA | jq -r '.path')  
-          API_SERVICE_URL=$(echo $API_DATA | jq -r '.serviceUrl') 
-
-          az apim api import \
-              --resource-group mil-u-integration-rg \
-              --service-name mil-u-apim \
-              --api-id mil-u-terminal-registry \
-              --specification-format OpenApi \
-              --specification-url https://raw.githubusercontent.com/pagopa/mil-terminal-registry/main/src/main/resources/META-INF/openapi.yaml \
-              --path $API_PATH \
-              --service-url $API_SERVICE_URL
-
-

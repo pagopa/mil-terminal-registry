@@ -1,0 +1,44 @@
+name: Postman test
+
+on:
+    workflow_dispatch:
+      inputs:
+        skip-unit-test:
+          type: boolean
+          required: true
+          description: Skip unit-test
+
+jobs:
+  postman-test:
+    
+    runs-on: ubuntu-latest
+    
+    environment: dev-cd
+    
+    permissions:
+      id-token: write
+      packages: write
+      contents: write
+    
+    steps:
+        
+      #  
+      # Install Node.
+      #
+      - name: Install Node
+        uses: actions/setup-node@64ed1c7eab4cce3362f8c340dee64e5eaeef8f7c
+        with:
+          node-version: "18.16.0"
+
+      #
+      # Install Newman.
+      #
+      - name: Install Newman
+        run: npm install -g newman
+
+      #
+      # Run Postman collection.
+      #
+      - name: Run Postman collection
+        run: newman run src/test/postman/mil-terminal-registry.postman_collection.json -e src/test/postman/dev.postman_environment.json --env-var "tr_token_client_id=${{ secrets.NEWMAN_IT__TR_TOKEN_CLIENT_ID }}" --env-var "tr_token_client_secret=${{ secrets.NEWMAN_IT__TR_TOKEN_CLIENT_SECRET }}"       
+     
